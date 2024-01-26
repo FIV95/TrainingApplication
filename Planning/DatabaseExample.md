@@ -70,13 +70,31 @@ Exercise ID: 100
 Prescribed Repetitions: 10
 Prescribed Sets: 3
 Prescribed Weight: 100 lbs
+Session Notes From Coach: "Last Set get as many reps as you can within reason"
 Actual Repetitions: 10
 Actual Sets: 3
 Actual Weight Used: 95 lbs
-Comments/Notes: Lower the weight if form is compromised.
+Comments/Notes From User: "These felt Great!".
 CreatedAt: 2024-01-10 21:00:00
 UpdatedAt: 2024-01-10 22:00:00
 </code></div></div></pre>
+
+
+### Example Entry in TrainingSessionExerciseSets Table
+
+<pre><div class="bg-black rounded-md"><div class="flex items-center relative text-gray-200 bg-gray-800 dark:bg-token-surface-primary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span></span><span class="" data-state="closed"></span></div></div></pre>
+
+```plaintext
+Set ID: 5000
+Training Session Exercise ID: 3000
+Set Number: 1
+Repetitions Achieved: 10
+Weight Used: 95 lbs
+Comments/Notes: "Felt good"
+CreatedAt: 2024-01-11 09:00:00
+UpdatedAt: 2024-01-11 09:15:00
+```
+
 
 ### Example of PerformanceRecords Table
 

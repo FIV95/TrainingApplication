@@ -53,7 +53,6 @@
 * Summary ID (Primary Key)
 * Client ID (Foreign Key from Clients Table)
 * Coach ID (Foreign Key from Coaches Table)
-* Week Starting Date (to indicate the start of the training week)
 * Summary Details (text detailing the training plan for the week)
 * CreatedAt
 * UpdatedAt
@@ -65,11 +64,11 @@
 * Exercise ID (Foreign Key from Exercises Table)
 * Prescribed Repetitions
 * Prescribed Sets
-* Prescribed Weight/Duration/Intensity
+* Prescribed Weight
 * Actual Repetitions (reported by the user)
 * Actual Sets (reported by the user)
 * Actual Weight Used (reported by the user)
-* Comments/Notes
+* Comments/Notes (reported by the user)
 * CreatedAt
 * UpdatedAt
 
@@ -82,5 +81,16 @@
 * Most Weight Lifted
 * Most Weight Lifted Date
 * Comments/Notes
+* CreatedAt
+* UpdatedAt
+
+### TrainingSessionExerciseSets Table
+
+* Set ID (Primary Key)
+* Training Session Exercise ID (Foreign Key from TrainingSessionExercises Table)
+* Set Number (e.g., Set 1, Set 2, etc.)
+* Repetitions Achieved
+* Weight Used
+* Comments/Notes (specific to the set)
 * CreatedAt
 * UpdatedAt
