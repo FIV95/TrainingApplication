@@ -42,6 +42,8 @@
 * Comment ID (Primary Key)
 * Content
 * Author ID (Can be either a Coach ID or Client ID, consider using a polymorphic association)
+
+  *[https://medium.com/@hendelRamzy/what-is-polymorphic-relationships-and-how-they-work-61df8d1562c5]()*
 * Related Entity ID (Can be any entity to which the comment is related, possibly using a polymorphic association)
 * CreatedAt
 * UpdatedAt
@@ -56,7 +58,7 @@
 * CreatedAt
 * UpdatedAt
 
-### TrainingSessionExercises Table (Updated)
+### TrainingSessionExercises Table
 
 * Training Session Exercise ID (Primary Key)
 * Training Session ID (Foreign Key from TrainingSessions Table)
@@ -66,12 +68,12 @@
 * Prescribed Weight/Duration/Intensity
 * Actual Repetitions (reported by the user)
 * Actual Sets (reported by the user)
-* Actual Weight/Duration/Intensity (reported by the user)
+* Actual Weight Used (reported by the user)
 * Comments/Notes
 * CreatedAt
 * UpdatedAt
 
-### PerformanceRecords Table (Updated)
+### PerformanceRecords Table
 
 * Record ID (Primary Key)
 * Client ID (Foreign Key from Clients Table)
