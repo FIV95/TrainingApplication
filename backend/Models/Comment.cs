@@ -29,7 +29,7 @@ public class Comment
 // Furthermore, because the related data is loaded automatically when you access the navigation property, you don't need to use the Include method to load it explicitly.
 // This can make your code simpler and easier to read.
 
-// ! example of CreateComment and how we would use the is keyword
+// ! example of CreateComment and how we would use the _is_ keyword
 // public void CreateComment(UserBase user, string text)
 // {
 //     var comment = new Comment

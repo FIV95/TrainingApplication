@@ -9,6 +9,7 @@ public class Client : UserBase
     public int? CoachId { get; set; }
     public virtual Coach Coach { get; set; }
 
-    // Other client-specific properties and behaviors
-    // ...
+    // A Client has many TrainingSessions
+    public virtual ICollection<TrainingSession> TrainingSessions { get; set; }
+
 }

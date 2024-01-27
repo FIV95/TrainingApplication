@@ -11,10 +11,11 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add DbContext
+
+
 builder.Services.AddDbContext<MyContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 21))));
 
 // Add session services
 builder.Services.AddDistributedMemoryCache(); // Required to use session
@@ -33,10 +34,13 @@ app.UseHttpsRedirection();
 
 // Use session
 app.UseSession();
+app.UseStaticFiles();
 
-app.Run();
-using (var scope = app.Services.CreateScope())
+app.Run(async context =>
 {
-    var context = scope.ServiceProvider.GetRequiredService<MyContext>();
-    context.Database.Migrate();
-}
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
+        await dbContext.Database.MigrateAsync();
+    }
+});

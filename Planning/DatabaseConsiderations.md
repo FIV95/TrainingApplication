@@ -65,32 +65,34 @@
 * Prescribed Repetitions
 * Prescribed Sets
 * Prescribed Weight
-* Actual Repetitions (reported by the user)
-* Actual Sets (reported by the user)
-* Actual Weight Used (reported by the user)
+* Actual Repetitions (reported by the user) ?
+* Actual Sets (reported by the user) ?
+* Actual Weight Used (reported by the user) ?
+* Results `<textfield>`
+* CompletedAsPrescribed `<bool> `
 * Comments/Notes (reported by the user)
 * CreatedAt
 * UpdatedAt
 
-### PerformanceRecords Table
+### ~~PerformanceRecords Table~~
 
-* Record ID (Primary Key)
-* Client ID (Foreign Key from Clients Table)
-* Exercise ID (Foreign Key from Exercises Table)
-* Tonnage (total volume lifted, calculated as weight * repetitions * sets)
-* Most Weight Lifted
-* Most Weight Lifted Date
-* Comments/Notes
-* CreatedAt
-* UpdatedAt
+* ~~Record ID (Primary Key)~~
+* ~~Client ID (Foreign Key from Clients Table)~~
+* ~~Exercise ID (Foreign Key from Exercises Table)~~
+* ~~Tonnage (total volume lifted, calculated as weight * repetitions * sets)~~
+* ~~Most Weight Lifted~~
+* ~~Most Weight Lifted Date~~
+* ~~Comments/Notes~~
+* ~~CreatedAt~~
+* ~~UpdatedAt~~
 
-### TrainingSessionExerciseSets Table
+### ~~TrainingSessionExerciseSets Table~~
 
-* Set ID (Primary Key)
-* Training Session Exercise ID (Foreign Key from TrainingSessionExercises Table)
-* Set Number (e.g., Set 1, Set 2, etc.)
-* Repetitions Achieved
-* Weight Used
-* Comments/Notes (specific to the set)
-* CreatedAt
-* UpdatedAt
+* ~~Set ID (Primary Key)~~
+* ~~Training Session Exercise ID (Foreign Key from TrainingSessionExercises Table)~~
+* ~~Set Number (e.g., Set 1, Set 2, etc.)~~
+* ~~Repetitions Achieved~~
+* ~~Weight Used~~
+* ~~Comments/Notes (specific to the set)~~
+* ~~CreatedAt~~
+* ~~UpdatedAt~~
