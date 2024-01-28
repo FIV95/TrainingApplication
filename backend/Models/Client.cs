@@ -5,6 +5,7 @@ using backend.Models;
 
 public class Client : UserBase
 {
+    public int UserBaseId { get; set; }
     // A Client has one Coach, but it's optional until they accept an invite
     public int? CoachId { get; set; }
     public virtual Coach Coach { get; set; }

@@ -9,13 +9,17 @@ public class Comment
     [Key]
     public int Id { get; set; }
     public string Text { get; set; }
-    public int UserId { get; set; }
 
-    // This property will hold the type of the user (either "Coach" or "Client") who created the comment
-    public string UserType { get; set; }
+    // Foreign key to UserBase
+    public int UserBaseId { get; set; }
 
-
+    // Navigation property to UserBase
     public virtual UserBase User { get; set; }
+
+    public int? TrainingSessionId { get; set; }
+    public virtual TrainingSession TrainingSession { get; set; }
+    public int? TrainingSessionExerciseId { get; set; }
+    public virtual TrainingSessionExercise TrainingSessionExercise { get; set; }
 }
 
 // This is a navigation property. It allows us to access the UserBase object (either a Coach or a Client)

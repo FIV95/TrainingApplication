@@ -10,7 +10,7 @@ namespace backend.Models
     {
         public MyContext(DbContextOptions<MyContext> options) : base(options) { }
 
-        public DbSet<UserBase> Users { get; set; }
+        public DbSet<UserBase> UserBases { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Coach> Coaches { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -21,12 +21,15 @@ namespace backend.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserBase>(b =>
-            {
-                b.HasDiscriminator<string>("UserType")
-                    .HasValue<Client>("Client")
-                    .HasValue<Coach>("Coach");
-            });
+            modelBuilder.Entity<Client>()
+                .HasOne<UserBase>()
+                .WithOne()
+                .HasForeignKey<Client>(c => c.UserBaseId);
+
+            modelBuilder.Entity<Coach>()
+                .HasOne<UserBase>()
+                .WithOne()
+                .HasForeignKey<Coach>(c => c.UserBaseId);
         }
     }
 }

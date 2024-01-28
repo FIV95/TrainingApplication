@@ -30,6 +30,8 @@ public class TrainingSession
 
     // Navigation property for the exercises in this training session
     public virtual ICollection<TrainingSessionExercise> TrainingSessionExercises { get; set; }
+
+    public virtual ICollection<Comment> Comments { get; set; }
 }
 
 

@@ -5,7 +5,8 @@ using backend.Models;
 
 public class Coach : UserBase
 {
+    public int UserBaseId { get; set; }
     // A Coach has many Clients
-    public virtual ICollection<Client> Clients { get; set; }
+    public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
 }
