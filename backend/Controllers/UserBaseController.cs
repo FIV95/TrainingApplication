@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using backend.Data;
 using System.Threading.Tasks;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -17,47 +20,45 @@ public class UserBaseController : ControllerBase
         _logger = logger;
     }
 
-    // GET: api/UserBase
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserBase>>> GetUserBases()
+    // POST: api/UserBase
+    // The POST method adds a UserBase to the database
+    // After Creating a Userbase the UserType Property Dictates which table the user is added to
+    [HttpPost]
+    public async Task<ActionResult<UserBase>> PostUserBase([FromBody] JsonElement jsonBody)
     {
-        return await _context.UserBases.ToListAsync();
-    }
+        // Convert the JsonElement to a string
+        string jsonString = jsonBody.GetRawText();
 
-    // GET: api/UserBase/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserBase>> GetUserBase(int id)
-    {
-        var user = await _context.UserBases.FindAsync(id);
+        // Log message to appear to notify that the route was hit
+        _logger.LogInformation("\n\nUserBaseController hit for POST user\n\n");
 
-        if (user == null)
+        UserBase user;
+        string userType = jsonBody.GetProperty("UserType").GetString();
+        switch (userType)
         {
-            return NotFound();
+            case "Client":
+                var client = JsonConvert.DeserializeObject<Client>(jsonString);
+                _context.Clients.Add(client);
+                user = client;
+                break;
+            case "Coach":
+                var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
+                _context.Coaches.Add(coach);
+                user = coach;
+                break;
+            default:
+                return BadRequest("Invalid user type");
         }
-
-        return user;
-    }
-
-    // PUT: api/UserBase/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUserBase(int id, UserBase user)
-    {
-        if (id != user.UserId)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(user).State = EntityState.Modified;
 
         try
         {
             await _context.SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateException ex)
         {
-            if (!UserBaseExists(id))
+            if (ex.InnerException != null && ex.InnerException.Message.Contains("Cannot insert duplicate key row in object"))
             {
-                return NotFound();
+                return Conflict(new { message = "Email already in use" });
             }
             else
             {
@@ -65,70 +66,95 @@ public class UserBaseController : ControllerBase
             }
         }
 
-        return NoContent();
+        _logger.LogInformation($"Form Data Received from POST:\n" +
+                              $"First Name: {user.FirstName}\n" +
+                              $"Last Name: {user.LastName}\n" +
+                              $"Email: {user.Email}\n" +
+                              $"Password: {user.Password}\n" +
+                              $"Created At: {user.CreatedAt}\n" +
+                              $"Updated At: {user.UpdatedAt}\n" +
+                              $"Comments: {user.Comments}\n\n");
+        return StatusCode(201, user);
     }
 
-    // POST: api/UserBase
-    [HttpPost]
-    public async Task<ActionResult<UserBase>> PostUserBase(UserBase user)
+    // GET: api/UserBase
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserBase>>> GetAllUsers()
     {
-        if (user.UserType == "Client")
-        {
-            var client = new Client
-            {
-                // Copy properties from user to client
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                UserType = user.UserType,
-                Email = user.Email,
-                Password = user.Password,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt,
-                Comments = user.Comments,
-            };
-
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetClient", new { id = client.UserId }, client);
-        }
-        else if (user.UserType == "Coach")
-        {
-            var coach = new Coach
-            {
-                // Copy properties from user to coach
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                UserType = user.UserType,
-                Email = user.Email,
-                Password = user.Password,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt,
-                Comments = user.Comments,
-            };
-
-            _context.Coaches.Add(coach);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCoach", new { id = coach.UserId }, coach);
-        }
-        else
-        {
-            return BadRequest("Invalid user type");
-        }
+        var allUsers = await _context.UserBases.ToListAsync();
+        return allUsers;
     }
 
-    // DELETE: api/UserBase/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUserBase(int id)
+    // GET: api/UserBase/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserBase>> GetUserBase(int id)
     {
-        var user = await _context.UserBases.FindAsync(id);
-        if (user == null)
+        var userBase = await _context.UserBases.FindAsync(id);
+
+        if (userBase == null)
         {
             return NotFound();
         }
 
-        _context.UserBases.Remove(user);
+        return userBase;
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutUserBase(int id, [FromBody] JsonElement jsonBody)
+    {
+        // Convert the JsonElement to a string
+        string jsonString = jsonBody.GetRawText();
+
+        // Determine the user type and deserialize to the appropriate type
+        string userType = jsonBody.GetProperty("UserType").GetString();
+        UserBase userToUpdate;
+        switch (userType)
+        {
+            case "Client":
+                userToUpdate = JsonConvert.DeserializeObject<Client>(jsonString);
+                break;
+            case "Coach":
+                userToUpdate = JsonConvert.DeserializeObject<Coach>(jsonString);
+                break;
+            default:
+                return BadRequest("Invalid user type");
+        }
+
+        // Check if the user with the given ID exists
+        if (!UserBaseExists(id))
+        {
+            return NotFound();
+        }
+
+        // Set the UserId of the user to update
+        userToUpdate.UserId = id;
+
+        // Update the entity
+        _context.Entry(userToUpdate).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Handle the concurrency exception
+            throw;
+        }
+
+        return NoContent();
+    }
+    // DELETE: api/UserBase/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUserBase(int id)
+    {
+        var userBase = await _context.UserBases.FindAsync(id);
+        if (userBase == null)
+        {
+            return NotFound();
+        }
+
+        _context.UserBases.Remove(userBase);
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -138,4 +164,6 @@ public class UserBaseController : ControllerBase
     {
         return _context.UserBases.Any(e => e.UserId == id);
     }
+
+
 }

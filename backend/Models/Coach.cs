@@ -2,11 +2,14 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using backend.Models;
+using System.Collections.Generic;
 
-public class Coach : UserBase
+namespace backend.Models
 {
-    public int UserBaseId { get; set; }
-    // A Coach has many Clients
-    public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
+    public class Coach : UserBase
+    {
+        // A Coach has many Clients
+        public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
+    }
 }

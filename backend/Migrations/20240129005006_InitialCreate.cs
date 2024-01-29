@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class InitialModels : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,7 +33,7 @@ namespace backend.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserBases",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
@@ -42,46 +42,38 @@ namespace backend.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserType = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UserType = table.Column<string>(type: "longtext", nullable: false)
+                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CoachId = table.Column<int>(type: "int", nullable: true)
+                    Client_UserBaseId = table.Column<int>(type: "int", nullable: true),
+                    CoachId = table.Column<int>(type: "int", nullable: true),
+                    UserBaseId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_UserBases", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Users_Users_CoachId",
+                        name: "FK_UserBases_UserBases_Client_UserBaseId",
+                        column: x => x.Client_UserBaseId,
+                        principalTable: "UserBases",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserBases_UserBases_CoachId",
                         column: x => x.CoachId,
-                        principalTable: "Users",
+                        principalTable: "UserBases",
                         principalColumn: "UserId");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Text = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UserType = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_UserBases_UserBases_UserBaseId",
+                        column: x => x.UserBaseId,
+                        principalTable: "UserBases",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -101,15 +93,15 @@ namespace backend.Migrations
                 {
                     table.PrimaryKey("PK_TrainingSessions", x => x.TrainingSessionId);
                     table.ForeignKey(
-                        name: "FK_TrainingSessions_Users_ClientId",
+                        name: "FK_TrainingSessions_UserBases_ClientId",
                         column: x => x.ClientId,
-                        principalTable: "Users",
+                        principalTable: "UserBases",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TrainingSessions_Users_CoachId",
+                        name: "FK_TrainingSessions_UserBases_CoachId",
                         column: x => x.CoachId,
-                        principalTable: "Users",
+                        principalTable: "UserBases",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -143,6 +135,40 @@ namespace backend.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Text = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserBaseId = table.Column<int>(type: "int", nullable: false),
+                    TrainingSessionId = table.Column<int>(type: "int", nullable: true),
+                    TrainingSessionExerciseId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_TrainingSessionExercises_TrainingSessionExerciseId",
+                        column: x => x.TrainingSessionExerciseId,
+                        principalTable: "TrainingSessionExercises",
+                        principalColumn: "TrainingSessionExerciseId");
+                    table.ForeignKey(
+                        name: "FK_Comments_TrainingSessions_TrainingSessionId",
+                        column: x => x.TrainingSessionId,
+                        principalTable: "TrainingSessions",
+                        principalColumn: "TrainingSessionId");
+                    table.ForeignKey(
+                        name: "FK_Comments_UserBases_UserBaseId",
+                        column: x => x.UserBaseId,
+                        principalTable: "UserBases",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "ExerciseSets",
                 columns: table => new
                 {
@@ -165,9 +191,19 @@ namespace backend.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
+                name: "IX_Comments_TrainingSessionExerciseId",
                 table: "Comments",
-                column: "UserId");
+                column: "TrainingSessionExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_TrainingSessionId",
+                table: "Comments",
+                column: "TrainingSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserBaseId",
+                table: "Comments",
+                column: "UserBaseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExerciseSets_TrainingSessionExerciseId",
@@ -195,9 +231,21 @@ namespace backend.Migrations
                 column: "CoachId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_CoachId",
-                table: "Users",
+                name: "IX_UserBases_Client_UserBaseId",
+                table: "UserBases",
+                column: "Client_UserBaseId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBases_CoachId",
+                table: "UserBases",
                 column: "CoachId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBases_UserBaseId",
+                table: "UserBases",
+                column: "UserBaseId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -218,7 +266,7 @@ namespace backend.Migrations
                 name: "TrainingSessions");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserBases");
         }
     }
 }

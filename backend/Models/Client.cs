@@ -1,16 +1,20 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using backend.Models;
+using System.Collections.Generic;
 
-public class Client : UserBase
+namespace backend.Models
 {
-    public int UserBaseId { get; set; }
-    // A Client has one Coach, but it's optional until they accept an invite
-    public int? CoachId { get; set; }
-    public virtual Coach Coach { get; set; }
+    public class Client : UserBase
+    {
+        // A Client has one Coach, but it's optional until they accept an invite
+        public int? CoachId { get; set; }
+        public virtual Coach Coach { get; set; }
 
-    // A Client has many TrainingSessions
-    public virtual ICollection<TrainingSession> TrainingSessions { get; set; }
+        // A Client has many TrainingSessions
+        public virtual ICollection<TrainingSession> TrainingSessions { get; set; }
 
+        public Client() : base() { }
+
+    }
 }

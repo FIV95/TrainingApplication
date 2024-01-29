@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using backend.Models;
+using backend.Data;
 
 #nullable disable
 
 namespace backend.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20240128185853_AddUserType")]
-    partial class AddUserType
+    [Migration("20240129014916_AddDiscriminatorColumn")]
+    partial class AddDiscriminatorColumn
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace backend.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Comment", b =>
+            modelBuilder.Entity("backend.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,12 +37,8 @@ namespace backend.Migrations
                     b.Property<int?>("TrainingSessionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserBaseId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -50,12 +46,12 @@ namespace backend.Migrations
 
                     b.HasIndex("TrainingSessionId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserBaseId");
 
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Exercise", b =>
+            modelBuilder.Entity("backend.Models.Exercise", b =>
                 {
                     b.Property<int>("ExerciseId")
                         .ValueGeneratedOnAdd()
@@ -78,7 +74,7 @@ namespace backend.Migrations
                     b.ToTable("Exercises");
                 });
 
-            modelBuilder.Entity("ExerciseSet", b =>
+            modelBuilder.Entity("backend.Models.ExerciseSet", b =>
                 {
                     b.Property<int>("ExerciseSetId")
                         .ValueGeneratedOnAdd()
@@ -100,7 +96,7 @@ namespace backend.Migrations
                     b.ToTable("ExerciseSets");
                 });
 
-            modelBuilder.Entity("TrainingSession", b =>
+            modelBuilder.Entity("backend.Models.TrainingSession", b =>
                 {
                     b.Property<int>("TrainingSessionId")
                         .ValueGeneratedOnAdd()
@@ -124,7 +120,7 @@ namespace backend.Migrations
                     b.ToTable("TrainingSessions");
                 });
 
-            modelBuilder.Entity("TrainingSessionExercise", b =>
+            modelBuilder.Entity("backend.Models.TrainingSessionExercise", b =>
                 {
                     b.Property<int>("TrainingSessionExerciseId")
                         .ValueGeneratedOnAdd()
@@ -145,7 +141,7 @@ namespace backend.Migrations
                     b.ToTable("TrainingSessionExercises");
                 });
 
-            modelBuilder.Entity("UserBase", b =>
+            modelBuilder.Entity("backend.Models.UserBase", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -179,43 +175,41 @@ namespace backend.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("UserType").HasValue("UserBase");
+                    b.ToTable("UserBases");
                 });
 
-            modelBuilder.Entity("Client", b =>
+            modelBuilder.Entity("backend.Models.Client", b =>
                 {
-                    b.HasBaseType("UserBase");
+                    b.HasBaseType("backend.Models.UserBase");
 
                     b.Property<int?>("CoachId")
                         .HasColumnType("int");
 
                     b.HasIndex("CoachId");
 
-                    b.HasDiscriminator().HasValue("Client");
+                    b.ToTable("Clients", (string)null);
                 });
 
-            modelBuilder.Entity("Coach", b =>
+            modelBuilder.Entity("backend.Models.Coach", b =>
                 {
-                    b.HasBaseType("UserBase");
+                    b.HasBaseType("backend.Models.UserBase");
 
-                    b.HasDiscriminator().HasValue("Coach");
+                    b.ToTable("Coaches", (string)null);
                 });
 
-            modelBuilder.Entity("Comment", b =>
+            modelBuilder.Entity("backend.Models.Comment", b =>
                 {
-                    b.HasOne("TrainingSessionExercise", "TrainingSessionExercise")
+                    b.HasOne("backend.Models.TrainingSessionExercise", "TrainingSessionExercise")
                         .WithMany()
                         .HasForeignKey("TrainingSessionExerciseId");
 
-                    b.HasOne("TrainingSession", "TrainingSession")
+                    b.HasOne("backend.Models.TrainingSession", "TrainingSession")
                         .WithMany("Comments")
                         .HasForeignKey("TrainingSessionId");
 
-                    b.HasOne("UserBase", "User")
+                    b.HasOne("backend.Models.UserBase", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -226,9 +220,9 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ExerciseSet", b =>
+            modelBuilder.Entity("backend.Models.ExerciseSet", b =>
                 {
-                    b.HasOne("TrainingSessionExercise", "TrainingSessionExercise")
+                    b.HasOne("backend.Models.TrainingSessionExercise", "TrainingSessionExercise")
                         .WithMany()
                         .HasForeignKey("TrainingSessionExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -237,15 +231,15 @@ namespace backend.Migrations
                     b.Navigation("TrainingSessionExercise");
                 });
 
-            modelBuilder.Entity("TrainingSession", b =>
+            modelBuilder.Entity("backend.Models.TrainingSession", b =>
                 {
-                    b.HasOne("Client", "Client")
+                    b.HasOne("backend.Models.Client", "Client")
                         .WithMany("TrainingSessions")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Coach", "Coach")
+                    b.HasOne("backend.Models.Coach", "Coach")
                         .WithMany()
                         .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -256,15 +250,15 @@ namespace backend.Migrations
                     b.Navigation("Coach");
                 });
 
-            modelBuilder.Entity("TrainingSessionExercise", b =>
+            modelBuilder.Entity("backend.Models.TrainingSessionExercise", b =>
                 {
-                    b.HasOne("Exercise", "Exercise")
+                    b.HasOne("backend.Models.Exercise", "Exercise")
                         .WithMany("TrainingSessionExercises")
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TrainingSession", "TrainingSession")
+                    b.HasOne("backend.Models.TrainingSession", "TrainingSession")
                         .WithMany("TrainingSessionExercises")
                         .HasForeignKey("TrainingSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -275,38 +269,53 @@ namespace backend.Migrations
                     b.Navigation("TrainingSession");
                 });
 
-            modelBuilder.Entity("Client", b =>
+            modelBuilder.Entity("backend.Models.Client", b =>
                 {
-                    b.HasOne("Coach", "Coach")
+                    b.HasOne("backend.Models.Coach", "Coach")
                         .WithMany("Clients")
                         .HasForeignKey("CoachId");
+
+                    b.HasOne("backend.Models.UserBase", null)
+                        .WithOne()
+                        .HasForeignKey("backend.Models.Client", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Coach");
                 });
 
-            modelBuilder.Entity("Exercise", b =>
+            modelBuilder.Entity("backend.Models.Coach", b =>
+                {
+                    b.HasOne("backend.Models.UserBase", null)
+                        .WithOne()
+                        .HasForeignKey("backend.Models.Coach", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Models.Exercise", b =>
                 {
                     b.Navigation("TrainingSessionExercises");
                 });
 
-            modelBuilder.Entity("TrainingSession", b =>
+            modelBuilder.Entity("backend.Models.TrainingSession", b =>
                 {
                     b.Navigation("Comments");
 
                     b.Navigation("TrainingSessionExercises");
                 });
 
-            modelBuilder.Entity("UserBase", b =>
+            modelBuilder.Entity("backend.Models.UserBase", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("Client", b =>
+            modelBuilder.Entity("backend.Models.Client", b =>
                 {
                     b.Navigation("TrainingSessions");
                 });
 
-            modelBuilder.Entity("Coach", b =>
+            modelBuilder.Entity("backend.Models.Coach", b =>
                 {
                     b.Navigation("Clients");
                 });
