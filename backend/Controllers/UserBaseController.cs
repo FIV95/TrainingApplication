@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 [ApiController]
 [Route("[controller]")]
@@ -38,11 +39,13 @@ public class UserBaseController : ControllerBase
         {
             case "Client":
                 var client = JsonConvert.DeserializeObject<Client>(jsonString);
+                client.Password = HashPassword(client.Password);
                 _context.Clients.Add(client);
                 user = client;
                 break;
             case "Coach":
                 var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
+                coach.Password = HashPassword(coach.Password);
                 _context.Coaches.Add(coach);
                 user = coach;
                 break;
@@ -163,6 +166,50 @@ public class UserBaseController : ControllerBase
     private bool UserBaseExists(int id)
     {
         return _context.UserBases.Any(e => e.UserId == id);
+    }
+
+    private string HashPassword(string password)
+    {
+        var hasher = new PasswordHasher<UserBase>();
+        return hasher.HashPassword(null, password);
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult> Login([FromBody] JsonElement jsonBody)
+    {
+        // Convert the JsonElement to a string
+        string jsonString = jsonBody.GetRawText();
+
+        // Deserialize the JSON to a dynamic object
+        dynamic data = JsonConvert.DeserializeObject(jsonString);
+
+        // Extract the email and password from the data
+        string email = data.Email;
+        string password = data.Password;
+
+        // Find the user with the given email
+        UserBase user = await _context.UserBases.FirstOrDefaultAsync(u => u.Email == email);
+
+        // If no user was found, return an error
+        if (user == null)
+        {
+            return NotFound(new { message = "No user found with this email" });
+        }
+
+        // Verify the password
+        var hasher = new PasswordHasher<UserBase>();
+        var result = hasher.VerifyHashedPassword(user, user.Password, password);
+
+        // If the password is correct, return a success message
+        if (result == PasswordVerificationResult.Success)
+        {
+            return Ok(new { message = "Login successful" });
+        }
+        // If the password is incorrect, return an error
+        else
+        {
+            return Unauthorized(new { message = "Incorrect password" });
+        }
     }
 
 
