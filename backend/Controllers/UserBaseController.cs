@@ -70,13 +70,13 @@ public class UserBaseController : ControllerBase
         }
 
         _logger.LogInformation($"Form Data Received from POST:\n" +
-                              $"First Name: {user.FirstName}\n" +
-                              $"Last Name: {user.LastName}\n" +
-                              $"Email: {user.Email}\n" +
-                              $"Password: {user.Password}\n" +
-                              $"Created At: {user.CreatedAt}\n" +
-                              $"Updated At: {user.UpdatedAt}\n" +
-                              $"Comments: {user.Comments}\n\n");
+                                $"First Name: {user.FirstName}\n" +
+                                $"Last Name: {user.LastName}\n" +
+                                $"Email: {user.Email}\n" +
+                                $"Password: {user.Password}\n" +
+                                $"Created At: {user.CreatedAt}\n" +
+                                $"Updated At: {user.UpdatedAt}\n" +
+                                $"Comments: {user.Comments}\n\n");
         return StatusCode(201, user);
     }
 

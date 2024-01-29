@@ -1,3 +1,4 @@
 .DS_Store
-Migration/
-appsettings.json
+Migrations/
+appsettings.json/
+bin/

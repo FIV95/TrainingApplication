@@ -2544,19 +2544,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/fiv/.nuget/packages/": {}
+    "C:\\Users\\judah\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/fiv/Desktop/StrengthTrainingApplication/backend/backend.csproj",
+      "projectUniqueName": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "/Users/fiv/Desktop/StrengthTrainingApplication/backend/backend.csproj",
-      "packagesPath": "/Users/fiv/.nuget/packages/",
-      "outputPath": "/Users/fiv/Desktop/StrengthTrainingApplication/backend/obj/",
+      "projectPath": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\judah\\.nuget\\packages\\",
+      "outputPath": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/fiv/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\judah\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -2630,7 +2630,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
