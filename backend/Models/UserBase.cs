@@ -24,7 +24,6 @@ namespace backend.Models
         [Required(ErrorMessage = "User Type is required")]
         public string UserType { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         [UniqueEmail]
         [DisplayName("Email")]

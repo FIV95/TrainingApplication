@@ -5,8 +5,6 @@ using backend.Models;
 
 namespace backend.Models
 {
-
-
     public class TrainingSession
     {
         // The unique ID for this training session
@@ -32,10 +30,13 @@ namespace backend.Models
         [FutureDate(ErrorMessage = "DueDate must be in the future.")]
         public DateTime DueDate { get; set; }
 
-        // Navigation property for the exercises in this training session
-        public virtual ICollection<TrainingSessionExercise> TrainingSessionExercises { get; set; }
+        public bool IsCompleted { get; set; } = false;
+        public bool IsLate { get; set; } = false;
 
-        public virtual ICollection<Comment> Comments { get; set; }
+        // Navigation property for the exercises in this training session
+        public virtual ICollection<TrainingSessionExercise> TrainingSessionExercises { get; set; } = new List<TrainingSessionExercise>();
+
+        public virtual ICollection<Comment>? Comments { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;

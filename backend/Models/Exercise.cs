@@ -22,7 +22,7 @@ namespace backend.Models
         public string VideoLink { get; set; }
 
         // Navigation property for the training sessions this exercise is part of
-        public virtual ICollection<TrainingSessionExercise> TrainingSessionExercises { get; set; }
+        public virtual ICollection<TrainingSessionExercise> TrainingSessionExercises { get; set; } = new List<TrainingSessionExercise>();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
