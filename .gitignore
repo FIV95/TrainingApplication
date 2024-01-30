@@ -2,3 +2,4 @@
 Migrations/
 appsettings.json/
 bin/
+obj/

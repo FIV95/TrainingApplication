@@ -3,13 +3,17 @@ using backend.Models;
 using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Text.Json.Serialization;
 
 // Rest of your using directives
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = null;
+});
 builder.Services.AddDistributedMemoryCache(); // Required to use session
 builder.Services.AddSession();
 
@@ -46,8 +50,6 @@ app.UseCors("AllowSpecificOrigin");
 
 // Rest of your code
 
-app.UseSession();
-app.UseStaticFiles();
 
 app.UseRouting();
 

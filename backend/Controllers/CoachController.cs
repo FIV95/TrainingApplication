@@ -4,13 +4,14 @@ using backend.Models;
 using backend.Data;
 using System.Threading.Tasks;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-
-    // ! Post route to create Coaches exists inside of ClientController
 
     public class CoachesController : ControllerBase
     {
@@ -22,121 +23,110 @@ namespace backend.Controllers
             _context = context;
             _logger = logger;
         }
-
-        // GET: api/Coaches
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Coach>>> GetCoaches()
+        // Route is to add a client to a coach's collection of clients
+        // Route Requires Session-Id Header && Email in Body for request to work
+        [HttpPost("addClient")]
+        public async Task<ActionResult> AddClient([FromBody] JsonElement jsonBody)
         {
-            return await _context.Coaches.ToListAsync();
-        }
+            // Log message to appear to notify that the route was hit
+            _logger.LogInformation("\n\nCoachesController hit for POST addClient\n\n");
+            // Extract the session ID from the request header
+            string sessionId = Request.Headers["Session-Id"];
 
-        // GET: api/Coaches/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Coach>> GetCoach(int id)
-        {
-            var coach = await _context.Coaches.FindAsync(id);
 
+            int sessionIdInt;
+            if (!int.TryParse(sessionId, out sessionIdInt))
+            {
+                return BadRequest("Session-Id must be an integer");
+            }
+
+            Coach coach = await _context.Coaches.FindAsync(sessionIdInt);
+
+            // If no coach was found, return an error
             if (coach == null)
             {
-                return NotFound();
+                return NotFound(new { message = "No coach found with this session ID" });
             }
 
-            return coach;
-        }
+            // Convert the JsonElement to a string
+            string jsonString = jsonBody.GetRawText();
 
-        // PUT: api/Coaches/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCoach(int id, Coach coach)
-        {
-            if (id != coach.UserId)
+            // Deserialize the JSON to a dynamic object
+            dynamic data = JsonConvert.DeserializeObject(jsonString);
+
+            // Extract the email from the data
+            string email = data.Email;
+
+            // Find the UserBase with the given email
+            UserBase user = await _context.UserBases
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            // If no user was found, return an error
+            if (user == null)
             {
-                return BadRequest();
+                return NotFound(new { message = "No user found with this email" });
             }
 
-            var existingCoach = await _context.Coaches.FindAsync(id);
-            if (existingCoach == null)
+            // Find the client with the UserBase's UserId
+            Client client = await _context.Clients
+                .FirstOrDefaultAsync(c => c.UserId == user.UserId);
+
+            // If no client was found, return an error
+            if (client == null)
             {
-                _logger.LogError($"Coach with id {id} not found");
-                return NotFound();
+                return NotFound(new { message = "No client found with this UserId" });
             }
 
-            _logger.LogInformation($"Existing Coach: {System.Text.Json.JsonSerializer.Serialize(existingCoach)}");
-            _logger.LogInformation($"Received Coach: {System.Text.Json.JsonSerializer.Serialize(coach)}");
+            // Add the Client to the Coach's collection of clients
+            coach.Clients.Add(client);
 
-            _context.Entry(coach).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CoachExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/Coaches/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCoach(int id)
-        {
-            var coach = await _context.Coaches.FindAsync(id);
-            if (coach == null)
-            {
-                return NotFound();
-            }
-
-            _context.Coaches.Remove(coach);
+            // Save the changes to the database
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            // Return a success message
+            return Ok(new { message = "Client added successfully" });
+
         }
 
-        private bool CoachExists(int id)
+
+        // The following route is to view all the clients of a single coach (The coach that is logged in according to session)
+        [HttpGet("viewClients")]
+        public async Task<ActionResult> ViewClients()
         {
-            return _context.Coaches.Any(e => e.UserId == id);
-        }
+            // Log message to appear to notify that the route was hit
+            _logger.LogInformation("\n\nCoachesController hit for GET viewClients\n\n");
+            // Extract the session ID from the request header
+            string sessionId = Request.Headers["Session-Id"];
 
-        // This route will query the database for all the clients associated with a coach
-        // It will return a list of Client objects
-        // The route is /coaches/clients
-        // The coach's ID is retrieved from the session, ensuring that coaches can only view their own clients
-        [HttpGet]
-        [Route("clients")]
-        public async Task<ActionResult<IEnumerable<Client>>> GetClientsForCoach()
-        {
-            // Get the session id from the headers
-            if (!Request.Headers.TryGetValue("Session-Id", out var idStr))
+            int sessionIdInt;
+            if (!int.TryParse(sessionId, out sessionIdInt))
             {
-                return BadRequest("No Session-Id in headers");
+                return BadRequest("Session-Id must be an integer");
             }
+            // Find the coach with the given session ID
+            Coach coach = await _context.Coaches
+                .Include(c => c.Clients)
+                .FirstOrDefaultAsync(c => c.UserId == sessionIdInt);
 
-            if (!int.TryParse(idStr, out var id))
-            {
-                return BadRequest("Invalid Session-Id in headers");
-            }
-
-            // Get the coach with this id
-            var coach = await _context.Coaches.FindAsync(id);
-
+            // if no coach was found, return an error
             if (coach == null)
             {
-                return NotFound();
+                return NotFound(new { message = "No coach found with this session ID" });
             }
 
-            // Get the clients for this coach
-            var clients = _context.Clients.Where(c => c.CoachId == id);
+            // Return the coach's clients
+            return Ok(coach.Clients.Select(client => new ClientDto
+            {
+                CoachId = client.CoachId,
+                TrainingSessions = client.TrainingSessions,
 
-            return await clients.ToListAsync();
+                // Properties inherited from UserBase
+                UserId = client.UserId,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                UserType = client.UserType,
+                Email = client.Email,
+            }));
         }
     }
-
 }
