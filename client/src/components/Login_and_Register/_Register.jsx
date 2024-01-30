@@ -2,9 +2,6 @@ import { useState } from 'react'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
-    Routes,
-    Route,
-    Link,
     useNavigate
 } from "react-router-dom";
 
@@ -59,15 +56,13 @@ function Register(props) {
     
                 navigate("/success")
 
-                console.log("I should be navigating.")
             }).catch (err => {
                         if (err.response.data)
                         {
                             console.log(err.response.data);
                             setErrors(err.response.data) 
                             }
-                        }
-                    )
+            })
     }
 
     return (
