@@ -14,6 +14,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = null;
 });
+
+DotNetEnv.Env.Load();
+
 builder.Services.AddDistributedMemoryCache(); // Required to use session
 builder.Services.AddSession();
 
@@ -49,8 +52,6 @@ app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 
 // Rest of your code
-
-
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>

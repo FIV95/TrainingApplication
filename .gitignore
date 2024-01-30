@@ -1,5 +1,7 @@
 .DS_Store
 Migrations/
-appsettings.json/
 bin/
 obj/
+Debug/
+.vscode
+backend/appsettings.json

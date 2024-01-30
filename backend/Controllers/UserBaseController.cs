@@ -39,21 +39,44 @@ namespace backend.Controllers
             string userType = jsonBody.GetProperty("UserType").GetString();
             switch (userType)
             {
+                // case "Client":
+                //     var client = JsonConvert.DeserializeObject<Client>(jsonString);
+                //     client.Password = HashPassword(client.Password);
+                //     _context.Clients.Add(client);
+                //     user = client;
+                //     break;
+                // case "Coach":
+                //     var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
+                //     coach.Password = HashPassword(coach.Password);
+                //     _context.Coaches.Add(coach);
+                //     user = coach;
+                //     break;
+                // default:
+                //     return BadRequest("Invalid user type");
+
                 case "Client":
                     var client = JsonConvert.DeserializeObject<Client>(jsonString);
+                    if (!TryValidateModel(client))
+                    {
+                        return BadRequest(ModelState);
+                    }
                     client.Password = HashPassword(client.Password);
                     _context.Clients.Add(client);
                     user = client;
                     break;
                 case "Coach":
                     var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
+                    if (!TryValidateModel(coach))
+                    {
+                        return BadRequest(ModelState);
+                    }
                     coach.Password = HashPassword(coach.Password);
                     _context.Coaches.Add(coach);
                     user = coach;
                     break;
                 default:
                     return BadRequest("Invalid user type");
-            }
+                    }
 
             try
             {
@@ -72,13 +95,13 @@ namespace backend.Controllers
             }
 
             _logger.LogInformation($"Form Data Received from POST:\n" +
-                                  $"First Name: {user.FirstName}\n" +
-                                  $"Last Name: {user.LastName}\n" +
-                                  $"Email: {user.Email}\n" +
-                                  $"Password: {user.Password}\n" +
-                                  $"Created At: {user.CreatedAt}\n" +
-                                  $"Updated At: {user.UpdatedAt}\n" +
-                                  $"Comments: {user.Comments}\n\n");
+                                    $"First Name: {user.FirstName}\n" +
+                                    $"Last Name: {user.LastName}\n" +
+                                    $"Email: {user.Email}\n" +
+                                    $"Password: {user.Password}\n" +
+                                    $"Created At: {user.CreatedAt}\n" +
+                                    $"Updated At: {user.UpdatedAt}\n" +
+                                    $"Comments: {user.Comments}\n\n");
             return StatusCode(201, user);
         }
 

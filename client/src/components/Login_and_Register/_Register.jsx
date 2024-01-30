@@ -12,13 +12,13 @@ function Register() {
     const [form, setForm] = useState({
         firstName: "",
         lastName: "",
-        UserType: "",
+        UserType: "Client",
         email: "",
         password: "",
         confirmPassword: ""
     });
         
-    const [errors, setErrors] = useState(null);
+    const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
 
     const onChangeHandler = e => {
@@ -30,7 +30,7 @@ function Register() {
         setForm({
             firstName: "",
             lastName: "",
-            UserType: "",
+            UserType: "Client",
             email: "",
             password: "",
             confirmPassword: ""
@@ -63,16 +63,16 @@ function Register() {
             // Clears the form
             formReset();
             // Resets errors to null in case there had been some
-            setErrors(null);
+            setErrors([]);
 
-            useNavigate("/success")
+            navigate("/success")
 
             } catch (err) {
                 // Only Name is capable of getting an error
                 // Pull one layer back if you have multiple errors to watch out for
                 // console.log(err.response);
-                setErrors(err.response.data.errors);
-                console.log(errors)
+                console.log(err.response);
+                setErrors(err.response);
             }
     };
 
@@ -80,7 +80,7 @@ function Register() {
         <>
             <div>
                 <h1>Register</h1>
-                <form onSubmit={formHandler}>
+                <form onSubmit={formHandler} method='Post'>
                     {errors ? <span className="text-danger">{errors}</span> : ""}
 
                     <div className='text-start mb-3'>
@@ -117,7 +117,7 @@ function Register() {
                                     type='radio'
                                     name='UserType'
                                     value='Coach'
-                                    checked={form.UserType === 'Coach'}
+                                    // checked={form.UserType === 'Coach'}
                                     onChange={onChangeHandler}
                                     />
                                 <label>Coach</label>
@@ -128,7 +128,7 @@ function Register() {
                                     type='radio'
                                     name='UserType'
                                     value='Client'
-                                    checked={form.UserType === 'Client'}
+                                    checked={true}
                                     onChange={onChangeHandler}
                                     />
                                 <label>Client</label>
