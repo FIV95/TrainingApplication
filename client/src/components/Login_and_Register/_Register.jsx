@@ -8,17 +8,17 @@ import {
     useNavigate
 } from "react-router-dom";
 
-function Register() {
+function Register(props) {
     const [form, setForm] = useState({
         firstName: "",
         lastName: "",
         UserType: "Client",
         email: "",
         password: "",
-        confirmPassword: ""
+        passwordConfirm: ""
     });
         
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
     const onChangeHandler = e => {
@@ -33,7 +33,7 @@ function Register() {
             UserType: "Client",
             email: "",
             password: "",
-            confirmPassword: ""
+            passwordConfirm: ""
         });
     };
 
@@ -46,66 +46,84 @@ function Register() {
             `User Type: ${form.UserType}\n`,
             `Email: ${form.email}\n`,
             `Password: ${form.password}\n`,
-            `Confirm Password: ${form.confirmPassword}\n`
+            `Confirm Password: ${form.passwordConfirm}\n`
         );
 
         // try to add the item, otherwise, get errors
-        try {
             const addItem = await axios({
                 url: "https://localhost:7116/UserBase",
                 method: "post",
                 data: form,
                 contentType: "application/json"
-            });
-        
-            // Triggers an update to the page whenever a task is added to the list.
-            props.triggerUpdate()
-            // Clears the form
-            formReset();
-            // Resets errors to null in case there had been some
-            setErrors([]);
+            }).then( res =>{
+    
+                navigate("/success")
 
-            navigate("/success")
-
-            } catch (err) {
-                // Only Name is capable of getting an error
-                // Pull one layer back if you have multiple errors to watch out for
-                // console.log(err.response);
-                console.log(err.response);
-                setErrors(err.response);
-            }
-    };
+                console.log("I should be navigating.")
+            }).catch (err => {
+                        if (err.response.data)
+                        {
+                            console.log(err.response.data);
+                            setErrors(err.response.data) 
+                            }
+                        }
+                    )
+    }
 
     return (
         <>
             <div>
                 <h1>Register</h1>
                 <form onSubmit={formHandler} method='Post'>
-                    {errors ? <span className="text-danger">{errors}</span> : ""}
 
                     <div className='text-start mb-3'>
                         <label htmlFor='firstName'>First Name:</label>
                         <input className='form-control' type='text' name='firstName' value={form.firstName} onChange={onChangeHandler} />
+                        {
+                            errors.FirstName && errors.FirstName.map((error, index) => {
+                                return <p key={index} className='text-danger'>{error}</p>
+                            })
+                        }
                     </div>
                         
                     <div className='text-start mb-3'>
                         <label htmlFor='lastName'>Last Name:</label>
                         <input className='form-control' type='text' name='lastName' value={form.lastName} onChange={onChangeHandler}/>
+                        {
+                            errors.LastName && errors.LastName.map((error, index) => {
+                                return <p key={index} className='text-danger'>{error}</p>
+                            })
+                        }
                     </div>
 
                     <div className='text-start mb-3'>
                         <label htmlFor='email'>Email:</label>
                         <input className='form-control' type='text' name='email' value={form.email} onChange={onChangeHandler}/>
+                        {
+                            errors.Email && errors.Email.map((error, index) => {
+                                return <p key={index} className='text-danger'>{error}</p>
+                            })
+                        }
                     </div>
 
                     <div className='text-start mb-3'>
                         <label htmlFor='password'>Password:</label>
                         <input className='form-control' type='text' name='password' value={form.password} onChange={onChangeHandler}/>
+                        {
+                            errors.Password && errors.Password.map((error, index) => {
+                                return <p key={index} className='text-danger'>{error}</p>
+                            })
+                        }
                     </div>
 
                     <div className='text-start mb-3'>
-                        <label htmlFor='confirmPassword'>Confirm Password:</label>
-                        <input className='form-control' type='text' name='confirmPassword' value={form.confirmPassword} onChange={onChangeHandler}/>
+                        <label htmlFor='passwordConfirm'>Confirm Password:</label>
+                        <input className='form-control' type='text' name='passwordConfirm' value={form.passwordConfirm} onChange={onChangeHandler}/>
+                        {
+                            errors.PasswordConfirm && errors.PasswordConfirm.map((error, index) => {
+                                return <p key={index} className='text-danger'>{error}</p>
+                            })
+                        }
                     </div>
 
                     <div className='mb-3'>

@@ -1,7 +1,7 @@
 function Success() {
     return (
         <>
-            <h1>Succes!</h1>
+            <h1>Success!</h1>
         </>
     )
 }

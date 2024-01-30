@@ -139,3 +139,5 @@ C:\CodingDojo\Projects\TrainingApplication\backend\obj\Debug\net8.0\backend.pdb
 C:\CodingDojo\Projects\TrainingApplication\backend\obj\Debug\net8.0\backend.genruntimeconfig.cache
 C:\CodingDojo\Projects\TrainingApplication\backend\obj\Debug\net8.0\ref\backend.dll
 C:\CodingDojo\Projects\TrainingApplication\backend\bin\Debug\net8.0\System.Text.Json.dll
+C:\CodingDojo\Projects\TrainingApplication\backend\bin\Debug\net8.0\DotNetEnv.dll
+C:\CodingDojo\Projects\TrainingApplication\backend\bin\Debug\net8.0\Sprache.dll

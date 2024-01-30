@@ -23,7 +23,7 @@ builder.Services.AddSession();
 builder.Services.AddDbContext<MyContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))); // replace with your MySQL version
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)));
 });
 
 // Added CORS to communicate with the front end

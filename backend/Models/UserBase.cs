@@ -46,7 +46,7 @@ namespace backend.Models
 
 
         [NotMapped]
-        [JsonIgnore]
+        // [JsonIgnore]
         [Required(ErrorMessage = "Confirm Password is required")]
         [Compare("Password", ErrorMessage = "Passwords must match")]
         [DisplayName("Confirm Password")]
