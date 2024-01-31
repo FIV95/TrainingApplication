@@ -7,7 +7,7 @@ Below outlines the data pieces and the dataflow of those pieces as we navigate t
    1. This id will be 1-of-2 pieces of data that will allow us to properly navigate to our session builder.
 2. On the coach dashboard we have our table of **Client Names** each client entry will be tied to their id
 
-   1. This id will be 2-of-2 pieces of data that will allow us to properly navigate to our session builder.
+   1. This id will be 2-of-2 pieces of data that will allow us to properly navigate to our session builder. We will also store this ClientId into session
    2. Each row in the client table will have an action button to "Add Training Sessions"
    3. Upon clicking that action button we will be redircted to our Training Session Builder Component with both the Coach's ID (sender) & the Client's ID (reciever)
 3. ?? To have the Session Builder Process more intuitive and easier for the coach to create sessions we could run one optional query as this Session Builder Component renders
@@ -38,4 +38,14 @@ Below outlines the data pieces and the dataflow of those pieces as we navigate t
             1. we can create a state variable - InProgressTrainingSession
             2. this object will have the properties of a trainingSession based off our Model
                1. CoachId: "`<ID STORED IN SESSION>`"
-               2. ClientId: "<"
+               2. ClientId: "`<ID STORED IN SESSION>`"
+               3. A Date value
+                  1. So by creating this object we have to imagine what this object creation is going to give us back when we send it to the server.
+                  2. It'll give us TrainingSession Id of the object we just made
+                  3. With  access to this TrainingSession Id we can now make TrainingSessionExercises
+6. TrainingSessionExercises require the following properties
+
+   1. TrainingSessionId
+   2. ExerciseId
+      1. There is one piece of abstract information we need from the server to make this creation possible. We will get to that in step 3.
+      2. The form itself will be only one drop down select menu
