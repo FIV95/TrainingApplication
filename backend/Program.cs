@@ -14,11 +14,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = null;
 });
-
-DotNetEnv.Env.Load();
-
 builder.Services.AddDistributedMemoryCache(); // Required to use session
 builder.Services.AddSession();
+
 
 builder.Services.AddDbContext<MyContext>(options =>
 {
@@ -26,17 +24,8 @@ builder.Services.AddDbContext<MyContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)));
 });
 
-// Added CORS to communicate with the front end
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:5173")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
+builder.Services.AddCors(options => { options.AddPolicy("AllowSpecificOrigin", builder => { builder.WithOrigins("http://localhost:5173") .AllowAnyMethod() .AllowAnyHeader(); }); });
+
 
 var app = builder.Build();
 
@@ -46,12 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
-
-// Added CORs middleware
 app.UseCors("AllowSpecificOrigin");
 
-// Rest of your code
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>
@@ -59,7 +44,24 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.UseCors();
-app.MapControllers();
+UpdateLateStatuses(app);
 
 app.Run();
+
+void UpdateLateStatuses(IApplicationBuilder app)
+{
+    using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+    {
+        var context = serviceScope.ServiceProvider.GetRequiredService<MyContext>();
+
+        var pendingSessions = context.TrainingSessions
+            .Where(ts => !ts.IsCompleted && DateTime.Now > ts.DueDate);
+
+        foreach (var session in pendingSessions)
+        {
+            session.IsLate = true;
+        }
+
+        context.SaveChanges();
+    }
+}
