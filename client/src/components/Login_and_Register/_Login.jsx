@@ -33,7 +33,7 @@ function Login() {
                 contentType: "application/json"
             }).then( res =>{
     
-                navigate("/success")
+                navigate("/dashboard")
 
             }).catch (err => {
                         if (err.response.data)

@@ -10,15 +10,17 @@ import {
 
 import './App.css'
 import DashBoard from './components/DashBoard/Dashboard';
+import SessionBuilder from './components/SessionBuilder/Builder';
 
 function App() {
 
   return (
     <>
-    <Routes>
-      <Route path='/' element={<Login_and_Reg/>}></Route>
-      <Route path='/dashboard' element={<DashBoard/>}></Route>
-    </Routes>
+      <Routes>
+        <Route path='/' element={<Login_and_Reg />}></Route>
+        <Route path='/dashboard' element={<DashBoard />}></Route>
+        <Route path='/builder' element={<SessionBuilder />}></Route>
+      </Routes>
     </>
   )
 }
