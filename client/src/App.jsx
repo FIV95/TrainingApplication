@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 import './App.css'
-import Success from './components/Success';
+import DashBoard from './components/DashBoard/Dashboard';
 
 function App() {
 
@@ -17,8 +17,7 @@ function App() {
     <>
     <Routes>
       <Route path='/' element={<Login_and_Reg/>}></Route>
-      
-      <Route path='/success' element={<Success/>}></Route>
+      <Route path='/dashboard' element={<DashBoard/>}></Route>
     </Routes>
     </>
   )
