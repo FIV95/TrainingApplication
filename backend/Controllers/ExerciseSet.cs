@@ -10,7 +10,7 @@ using backend.Data;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ExerciseSetController : ControllerBase
     {

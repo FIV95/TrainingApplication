@@ -24,7 +24,7 @@ namespace backend.Controllers
             _logger = logger;
         }
 
-        // GET: api/Exercise
+        // GET: Exercise
         // Get All Exercises
         // The GET method returns an IEnumerable of Exercises
         [HttpGet]

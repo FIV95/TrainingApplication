@@ -16,14 +16,14 @@ namespace backend.Models
         public int CoachId { get; set; }
 
         // The coach who created this training session
-        public virtual Coach Coach { get; set; }
+        public virtual Coach? Coach { get; set; }
 
         // The ID of the client this training session is assigned to
         [ForeignKey("Client")]
         public int ClientId { get; set; }
 
         // The client this training session is assigned to
-        public virtual Client Client { get; set; }
+        public virtual Client? Client { get; set; }
 
         // The due date for this training session
         [Required]

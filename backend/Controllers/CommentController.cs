@@ -8,7 +8,7 @@ using System.Linq;
 // ! because we have two types of comments TrainingSession and TrainingSessionExercise
 // ! we have methods for both in this controller
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class CommentsController : ControllerBase
 {

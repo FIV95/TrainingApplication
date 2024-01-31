@@ -41,7 +41,8 @@ namespace backend.Controllers
             {
                 case "Client":
                     var client = JsonConvert.DeserializeObject<Client>(jsonString);
-                    if (!TryValidateModel(client))
+                    UserBase clientBase = client; // Treat the client as a UserBase
+                    if (!TryValidateModel(clientBase))
                     {
                         return BadRequest(ModelState);
                     }
@@ -51,7 +52,8 @@ namespace backend.Controllers
                     break;
                 case "Coach":
                     var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
-                    if (!TryValidateModel(coach))
+                    UserBase coachBase = coach; // Treat the coach as a UserBase
+                    if (!TryValidateModel(coachBase))
                     {
                         return BadRequest(ModelState);
                     }
@@ -85,8 +87,7 @@ namespace backend.Controllers
                                       $"Email: {user.Email}\n" +
                                       $"Password: {user.Password}\n" +
                                       $"Created At: {user.CreatedAt}\n" +
-                                      $"Updated At: {user.UpdatedAt}\n" +
-                                      $"Comments: {user.Comments}\n\n");
+                                      $"Updated At: {user.UpdatedAt}\n" );
             return StatusCode(201, user);
         }
 

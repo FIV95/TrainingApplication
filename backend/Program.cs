@@ -24,6 +24,9 @@ builder.Services.AddDbContext<MyContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))); // replace with your MySQL version
 });
 
+builder.Services.AddCors(options => { options.AddPolicy("AllowSpecificOrigin", builder => { builder.WithOrigins("http://localhost:5173") .AllowAnyMethod() .AllowAnyHeader(); }); });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,10 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
-
-// Rest of your code
-
+app.UseCors("AllowSpecificOrigin");
 
 app.UseRouting();
 

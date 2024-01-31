@@ -25,7 +25,7 @@ using backend.Data;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class TrainingSessionController : ControllerBase
     {
@@ -64,7 +64,7 @@ namespace backend.Controllers
             return sessions;
         }
 
-        // Post api/TrainingSession
+        // Post TrainingSession
         // This route creates a new training session
         // The route requires:
         // The CoachId in the header
@@ -74,9 +74,6 @@ namespace backend.Controllers
         public async Task<ActionResult<TrainingSession>> PostTrainingSession([FromHeader(Name = "Session-Id")] int CoachId, [FromBody] TrainingSession trainingSession)
         {
             _logger.LogInformation("\n\nTrainingSessionController hit for POST TrainingSession\n\n");
-
-            // The [FromHeader(Name = "Session-Id")] attribute tells ASP.NET Core to get the value of CoachId from the request headers with the key "Session-Id"
-            // The [FromBody] attribute tells ASP.NET Core to get the value of trainingSession from the request body
 
             // Set the CoachId from the header
             trainingSession.CoachId = CoachId;
@@ -105,6 +102,40 @@ namespace backend.Controllers
 
             // Return the created TrainingSessionExercise
             return CreatedAtAction("GetTrainingSessionExercise", new { id = trainingSessionExercise.TrainingSessionExerciseId }, trainingSessionExercise);
+        }
+
+        // GET: api/TrainingSession/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TrainingSession>> GetTrainingSession(int id)
+        {
+            // Get the TrainingSession with the specified id
+            var trainingSession = await _context.TrainingSessions.FindAsync(id);
+
+            // If the TrainingSession doesn't exist, return a 404 Not Found status
+            if (trainingSession == null)
+            {
+                return NotFound();
+            }
+
+            // Return the TrainingSession
+            return trainingSession;
+        }
+
+        // GET: TrainingSessionExercise/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TrainingSessionExercise>> GetTrainingSessionExercise(int id)
+        {
+            // Get the TrainingSessionExercise with the specified id
+            var trainingSessionExercise = await _context.TrainingSessionExercises.FindAsync(id);
+
+            // If the TrainingSessionExercise doesn't exist, return a 404 Not Found status
+            if (trainingSessionExercise == null)
+            {
+                return NotFound();
+            }
+
+            // Return the TrainingSessionExercise
+            return trainingSessionExercise;
         }
 
         // PUT: api/TrainingSession/{id}
