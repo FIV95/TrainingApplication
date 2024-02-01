@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ListGroup, Container, Row, Col, Tabs, Tab, Card } from 'react-bootstrap';
 
 const ClientDashboard = () => {
@@ -7,6 +7,8 @@ const ClientDashboard = () => {
         { id: 2, coachName: 'Coach Carter', comment: 'Remember to complete your Tuesday Workout.' },
         { id: 3, coachName: 'Coach Carter', comment: "Let's try to improve your squat technique next session." },
     ];
+
+    const [firstName, setFirstName] = useState(null);
 
     const [previousSessions, setPreviousSessions] = useState([
         { id: 1, date: "2024-01-20", exercises: ["Squat", "Bench Press"] },
@@ -37,12 +39,17 @@ const ClientDashboard = () => {
         console.log(`Reply to comment with id: ${notificationId}`);
     };
 
+    useEffect(() => {
+        const firstNameFromSession = sessionStorage.getItem('firstName');
+        setFirstName(firstNameFromSession);
+    })
+
     return (
         <>
             <div style={{ height: "60px" }} className='bg-secondary mb-5'>
                 <img className='d-flex flex-start' style={{ height: "50px" }} src='https://cdn.imgbin.com/22/5/12/imgbin-hamburger-button-computer-icons-menu-bar-line-4vAWQ1m6s7Hmt7dM6xA0GRhKG.jpg' alt='Hamburger Button' />
             </div>
-            <h1 className='mb-5'>Welcome, Giacomo</h1>
+            <h1 className='mb-5'>Welcome, {firstName}</h1>
             <div className='d-flex justify-content-center'>
                 <div>
                     <Tabs defaultActiveKey="upcomingSessions">
@@ -61,7 +68,7 @@ const ClientDashboard = () => {
                                 </Card>
                             ))}
                         </Tab>
-                        
+
                         <Tab eventKey="previousSessions" title="Previous Sessions">
                             {/* List Previous Sessions */}
                             {previousSessions.map((session) => (

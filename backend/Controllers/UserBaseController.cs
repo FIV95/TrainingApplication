@@ -208,7 +208,7 @@ namespace backend.Controllers
             if (user == null)
             {
                 // return NotFound(new { message = "No user found with this email" });
-                ModelState.AddModelError("LoginEmail", "No user found with email.");
+                ModelState.AddModelError("LoginEmail", "Invalid Credentials");
                 return BadRequest(ModelState);
             }
 
@@ -232,7 +232,8 @@ namespace backend.Controllers
             // If the password is incorrect, return an error
             else
             {
-                return Unauthorized(new { message = "Incorrect password" });
+                return BadRequest(ModelState);
+
             }
         }
 }}

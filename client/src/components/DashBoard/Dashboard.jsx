@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Button, ListGroup, Container, Row, Col } from 'react-bootstrap';
@@ -10,14 +10,18 @@ import CoachDashboard from './_CoachDashboard';
 import ClientDashboard from './_ClientDashboard';
 
 function DashBoard() {
-    // const [id, setId] = useState("Coach");
-    const [id, setId] = useState("Client");
+    const [userType, setUserType] = useState(sessionStorage.getItem('UserType'));
+
+    useEffect(() => {
+        const userTypeFromSession = sessionStorage.getItem('UserType');
+        setUserType(userTypeFromSession);
+    }, [sessionStorage.getItem('UserType')]);
 
     return (
         <>
-            { 
-                id == "Coach" ? <CoachDashboard></CoachDashboard> 
-                : <ClientDashboard></ClientDashboard>
+            {
+                userType == "Coach" ? <CoachDashboard></CoachDashboard>
+                    : <ClientDashboard></ClientDashboard>
             }
         </>
     )
