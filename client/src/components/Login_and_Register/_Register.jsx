@@ -67,7 +67,7 @@ function Register(props) {
 
     return (
         <>
-            <div>
+            <div className='p-5 bg-white rounded'>
                 <h1>Register</h1>
                 <form onSubmit={formHandler} method='Post'>
 

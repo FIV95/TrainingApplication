@@ -10,8 +10,8 @@ import CoachDashboard from './_CoachDashboard';
 import ClientDashboard from './_ClientDashboard';
 
 function DashBoard() {
-    // const [id, setId] = useState("Coach");
-    const [id, setId] = useState("Client");
+    const [id, setId] = useState("Coach");
+    // const [id, setId] = useState("Client");
 
     return (
         <>

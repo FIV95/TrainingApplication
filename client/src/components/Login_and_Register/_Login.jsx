@@ -46,7 +46,7 @@ function Login() {
 
     return (
         <>
-            <div>
+            <div className='p-5 bg-white rounded'>
                 <h1>Login</h1>
                 <form onSubmit={formHandler} method='Post'>
                     <div className='text-start mb-3'>

@@ -1,6 +1,80 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: none;
+  padding: none;
   text-align: center;
 }
+
+.header {
+  background-color: #0D1B2A;
+  color: white;
+  height: 75px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.body {
+  height: 100vh;
+  background-color: #E0E1DD;
+}
+
+/* Login and Reg */
+.Login {
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+  background-color: #415A77;
+  height: 50%;
+}
+
+.Reg {
+  border: none;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+  background-color: #415A77;
+  height: 80%;
+}
+
+/* Coach dashboard */
+.coach-dashboard {
+  background-color: #415A77;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  height: 300px;
+  /* overflow-y: scroll; */
+}
+
+.coach-notif {
+  background-color: #415A77;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  height: 390px;
+  width: 700px;
+}
+
+.add-client {
+  background-color: #474647;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.client {
+  height: 100px;
+  width: auto;
+  background-color: #474647;
+  color: white;
+  align-items: center;
+}
+
+.client-button {
+  background-color: #778DA9;
+}
+
+.coach-notification {
+  background-color: #474647;
+  height: 75px;
+  color: white;
+}
+
+/* Nav Bar */
+
+
+/* extras */
+.hamburger-menu {
+  color: white;
+  font-size: 40px;
+}
+
