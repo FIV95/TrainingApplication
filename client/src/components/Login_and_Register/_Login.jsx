@@ -8,10 +8,10 @@ import {
 function Login() {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    
+
     const [form, setForm] = useState({
-        email: "",
-        password: ""
+        LoginEmail: "",
+        LoginPassword: ""
     });
 
     const onChangeHandler = e => {
@@ -22,24 +22,24 @@ function Login() {
         e.preventDefault();
 
         console.log(
-            `Email: ${form.email}\n`,
-            `Password: ${form.password}\n`
+            `Email: ${form.LoginEmail}\n`,
+            `Password: ${form.LoginPassword}\n`
         );
 
             const addItem = await axios({
-                url: "https://localhost:7116/UserBase/login",
+                url: "http://localhost:5252/UserBase/login",
                 method: "post",
                 data: form,
                 contentType: "application/json"
             }).then( res =>{
-    
-                navigate("/success")
+
+                navigate("/dashboard")
 
             }).catch (err => {
                         if (err.response.data)
                         {
-                            console.log(err.response.data);
-                            setErrors(err.response.data) 
+                            console.log(err.response.data.errors);
+                            setErrors(err.response.data.errors)
                         }
             })
     }
@@ -50,20 +50,20 @@ function Login() {
                 <h1>Login</h1>
                 <form onSubmit={formHandler} method='Post'>
                     <div className='text-start mb-3'>
-                        <label htmlFor='email'>Email:</label>
-                        <input className='form-control' type='text' name='email' value={form.email} onChange={onChangeHandler}></input>
+                        <label htmlFor='LogEmail'>Email:</label>
+                        <input className='form-control' type='text' name='LoginEmail' value={form.LoginEmail} onChange={onChangeHandler}></input>
                         {
-                            errors.Email && errors.Email.map((error, index) => {
+                            errors.LoginEmail && errors.LoginEmail.map((error, index) => {
                                 return <p key={index} className='text-danger'>{error}</p>
                             })
                         }
 
                     </div>
                     <div className='text-start mb-3'>
-                        <label htmlFor='password'>Password</label>
-                        <input className='form-control' type='text' name='password' value={form.password} onChange={onChangeHandler}></input>
+                        <label htmlFor='LoginPassword'>Password</label>
+                        <input className='form-control' type='text' name='LoginPassword' value={form.LoginPassword} onChange={onChangeHandler}></input>
                         {
-                            errors.Password && errors.Password.map((error, index) => {
+                            errors.LoginPassword && errors.LoginPassword.map((error, index) => {
                                 return <p key={index} className='text-danger'>{error}</p>
                             })
                         }

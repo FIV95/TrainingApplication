@@ -45,10 +45,6 @@ namespace backend.Models
 
 
         [NotMapped]
-<<<<<<< HEAD
-        // [JsonIgnore]
-=======
->>>>>>> Frankie's-Branch
         [Required(ErrorMessage = "Confirm Password is required")]
         [Compare("Password", ErrorMessage = "Passwords must match")]
         [DisplayName("Confirm Password")]

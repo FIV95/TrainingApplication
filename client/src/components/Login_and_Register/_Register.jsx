@@ -14,11 +14,7 @@ function Register(props) {
         password: "",
         passwordConfirm: ""
     });
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> Frankie's-Branch
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -51,42 +47,22 @@ function Register(props) {
         );
 
         // try to add the item, otherwise, get errors
-<<<<<<< HEAD
             const addItem = await axios({
-                url: "https://localhost:7116/UserBase",
+                url: "http://localhost:5252/UserBase",
                 method: "post",
                 data: form,
                 contentType: "application/json"
             }).then( res =>{
-    
-                navigate("/success")
+
+                navigate("/dashboard")
 
             }).catch (err => {
                         if (err.response.data)
                         {
                             console.log(err.response.data);
-                            setErrors(err.response.data) 
+                            setErrors(err.response.data)
                             }
             })
-=======
-        const addItem = await axios({
-            url: "http://localhost:5252/UserBase",
-            method: "post",
-            data: form,
-            contentType: "application/json"
-        }).then(res => {
-            navigate("/success")
-            console.log("I should be navigating.")
-        }).catch(err => {
-            if (err.response && err.response.data) {
-                console.log(err.response.data);
-                setErrors(err.response.data)
-            } else {
-                // handle network error
-                console.log('Network error');
-            }
-        })
->>>>>>> Frankie's-Branch
     }
 
     return (

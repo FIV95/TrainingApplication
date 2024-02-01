@@ -41,8 +41,7 @@ namespace backend.Controllers
             {
                 case "Client":
                     var client = JsonConvert.DeserializeObject<Client>(jsonString);
-                    UserBase clientBase = client; // Treat the client as a UserBase
-                    if (!TryValidateModel(clientBase))
+                    if (!TryValidateModel(client))
                     {
                         return BadRequest(ModelState);
                     }
@@ -52,8 +51,7 @@ namespace backend.Controllers
                     break;
                 case "Coach":
                     var coach = JsonConvert.DeserializeObject<Coach>(jsonString);
-                    UserBase coachBase = coach; // Treat the coach as a UserBase
-                    if (!TryValidateModel(coachBase))
+                    if (!TryValidateModel(coach))
                     {
                         return BadRequest(ModelState);
                     }
@@ -63,7 +61,7 @@ namespace backend.Controllers
                     break;
                 default:
                     return BadRequest("Invalid user type");
-            }
+                    }
 
             try
             {
@@ -81,13 +79,14 @@ namespace backend.Controllers
                 }
             }
 
-            _logger.LogInformation($"\n\nForm Data Received from POST:\n" +
-                                      $"First Name: {user.FirstName}\n" +
-                                      $"Last Name: {user.LastName}\n" +
-                                      $"Email: {user.Email}\n" +
-                                      $"Password: {user.Password}\n" +
-                                      $"Created At: {user.CreatedAt}\n" +
-                                      $"Updated At: {user.UpdatedAt}\n" );
+            _logger.LogInformation($"Form Data Received from POST:\n" +
+                                    $"First Name: {user.FirstName}\n" +
+                                    $"Last Name: {user.LastName}\n" +
+                                    $"Email: {user.Email}\n" +
+                                    $"Password: {user.Password}\n" +
+                                    $"Created At: {user.CreatedAt}\n" +
+                                    $"Updated At: {user.UpdatedAt}\n" +
+                                    $"Comments: {user.Comments}\n\n");
             return StatusCode(201, user);
         }
 
@@ -186,25 +185,31 @@ namespace backend.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] JsonElement jsonBody)
+        public async Task<ActionResult> Login([FromBody] LoginUser logUser)
         {
-            // Convert the JsonElement to a string
-            string jsonString = jsonBody.GetRawText();
 
-            // Deserialize the JSON to a dynamic object
-            dynamic data = JsonConvert.DeserializeObject(jsonString);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            // Extract the email and password from the data
-            string email = data.Email;
-            string password = data.Password;
+            string email = logUser.LoginEmail;
+            Console.WriteLine("/n");
+            Console.WriteLine(email);
+            Console.WriteLine(logUser);
+            Console.WriteLine("/n");
+            string password = logUser.LoginPassword;
 
             // Find the user with the given email
             UserBase user = await _context.UserBases.FirstOrDefaultAsync(u => u.Email == email);
 
+
             // If no user was found, return an error
             if (user == null)
             {
-                return NotFound(new { message = "No user found with this email" });
+                // return NotFound(new { message = "No user found with this email" });
+                ModelState.AddModelError("LoginEmail", "No user found with email.");
+                return BadRequest(ModelState);
             }
 
             // Verify the password
@@ -230,7 +235,4 @@ namespace backend.Controllers
                 return Unauthorized(new { message = "Incorrect password" });
             }
         }
-
-
-    }
-}
+}}

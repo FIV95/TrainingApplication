@@ -59,12 +59,5 @@
     "/Users/fiv/.nuget/packages/system.text.json/8.0.1/system.text.json.8.0.1.nupkg.sha512",
     "/Users/fiv/.nuget/packages/system.windows.extensions/4.7.0/system.windows.extensions.4.7.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file /Users/fiv/Desktop/TrainingApplication/backend/obj/project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  "logs": []
 }
