@@ -8,3 +8,7 @@ backend/appsettings.json
 backend/obj/Debug/net8.0/backend.AssemblyInfo.cs
 backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache
 client/node_modules/
+node_modules
+package-lock.json
+package.json
+```

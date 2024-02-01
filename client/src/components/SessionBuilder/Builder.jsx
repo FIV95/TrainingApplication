@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Form, Tab, Tabs, Card, ListGroup, Row, Col } from 'react-bootstrap';
+import { format, parseISO } from 'date-fns';
+
+// TODO - Add the ability to remove exercises and sets
+// TODO - Add the ability to remove individual sets
+// TODO - Add button spacing
+
+// ! Judah I installed npm install date-fns
+// After importing :
+// impor the following:
+// ! import { format } from 'date-fns';
+
 
 const SessionBuilder = () => {
     //Fancy form stuff
@@ -9,6 +20,8 @@ const SessionBuilder = () => {
     // State variables for coach's ID and client's ID
     const [coachId, setCoachId] = useState(null);
     const [clientId, setClientId] = useState(null);
+
+    const [date, setDate] = useState('');
 
 
     // State Variable for showing the date selection
@@ -20,6 +33,11 @@ const SessionBuilder = () => {
 
     // state variable for showing the "Add a Set" button
     const [showAddSet, setShowAddSet] = useState(false);
+
+    const [isBuilding, setIsBuilding] = useState(false);
+
+    // state variable for api data
+    const [exerciseChoices, setExerciseChoices] = useState([]);
 
 
     const handleAddSessionClick = () => {
@@ -42,24 +60,7 @@ const SessionBuilder = () => {
     ]);
 
     // Hard Coded upcoming Session
-    const [upcomingSessions, setUpcomingSessions] = useState([
-        {
-            id: 1,
-            date: "2024-02-10",
-            exercises: [
-                { name: "Squat", sets: 3, reps: 10, weight: "100Ibs" },
-                { name: "Bench Press", sets: 3, reps: 8, weight: "60Ibs" },
-            ],
-        },
-        {
-            id: 2,
-            date: "2024-02-12",
-            exercises: [
-                { name: "Deadlift", sets: 4, reps: 6, weight: "120Ibs" },
-                { name: "Press", sets: 3, reps: 10, weight: "40Ibs" },
-            ],
-        },
-    ]);
+    const [upcomingSessions, setUpcomingSessions] = useState([]);
 
     // Hardcoded exercise options
     const exerciseOptions = ['Squat', 'Bench Press', 'Deadlift', 'Press', 'Power Clean'];
@@ -95,20 +96,51 @@ const SessionBuilder = () => {
     }
 
     const handleAddSet = () => {
-        // Add the current set to the sets array
-        setSets(prevSets => [...prevSets, { reps, weight, setNumber: prevSets.length + 1 }]);
+        // Create a new set object
+        const newSet = {
+            setNumber: sets.length + 1,
+            reps: reps,
+            weight: weight
+        };
+
+        // Add the new set to the sets array
+        setSets(prevSets => [...prevSets, newSet]);
 
         // Reset the reps and weight inputs
-        setReps(0);
-        setWeight(0);
+        setReps('');
+        setWeight('');
     };
 
     const handleAddSetSubmit = (event) => {
         console.log("Submitted Set!");
     }
 
-    const handleSubmit = () => {
-        // Logic to submit the session
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const newSession = {
+            date: selectedDate,
+            exercises: exercises.map(exercise => ({
+                name: exercise.name,
+                sets: exercise.sets.map(set => ({
+                    setNumber: set.setNumber,
+                    reps: set.reps,
+                    weight: set.weight
+                }))
+            }))
+        };
+
+        setUpcomingSessions(prevSessions => [...prevSessions, newSession]);
+    };
+
+    const handleAddExercise = () => {
+        const newExercise = {
+            name: currentExercise,
+            sets: sets
+        };
+
+        setExercises(prevExercises => [...prevExercises, newExercise]);
+        setSets([]);
     };
 
     useEffect(() => {
@@ -118,7 +150,7 @@ const SessionBuilder = () => {
         // Fetch all exercises from the backend using axios
         axios.get('/api/Exercise')
             .then(response => {
-                setExercises(response.data);
+                setExerciseChoices(response.data);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -148,16 +180,28 @@ const SessionBuilder = () => {
                                 {/* Session Details */}
                             </div>
                         ))}
-                        <Button onClick={handleAddSessionClick}>+ Add Session</Button>
+                        {!isBuilding && <Button onClick={() => { handleAddSessionClick(); setIsBuilding(true); }}>+ Add Session</Button>}
                         {showDateSelection && (
                             <Form className='text-start'>
                                 <Form.Group className='mt-4'>
-                                    <Form.Label>Select Date</Form.Label>
+                                    <Form.Label>Session Due Date</Form.Label>
                                     <Form.Control type="date" onChange={handleDateSelection} />
                                     {dateError && <div className="text-danger">{dateError}</div>}
                                 </Form.Group>
                                 {selectedDate && (
                                     <>
+                                        {Array.isArray(exercises) && exercises.map((exercise, index) => (
+                                            <div key={index}>
+                                                <h2>{exercise.name}</h2>
+                                                {exercise.sets.map((set, index) => (
+                                                    <p key={index}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                ))}
+                                            </div>
+                                        ))}
+
+                                        <Form>
+                                            {/* Your dropdown menu and other form elements */}
+                                        </Form>
                                         <Form.Group className='mt-4'>
                                             <Form.Label>Exercise(s)</Form.Label>
                                             <Form.Select aria-label="Select exercise" onChange={handleExerciseSelection}>
@@ -191,6 +235,8 @@ const SessionBuilder = () => {
                                                     </Row>
                                                 </Form>
                                                 <Button onClick={handleAddSet}>Add Set</Button>
+                                                <Button onClick={handleAddExercise}>Add Exercise</Button>
+                                                <Button onClick={handleSubmit}>Confirm Session</Button>
                                                 <hr></hr>
                                             </div>
                                         )}
@@ -199,13 +245,16 @@ const SessionBuilder = () => {
                             </Form>
                         )}
                         <hr></hr>
-                        {upcomingSessions.map((session) => (
-                            <Card key={session.id} className="my-3">
-                                <Card.Header as="h5">Due Date: {session.date}</Card.Header>
+                        {upcomingSessions.map((session, index) => (
+                            <Card key={index} className="my-3">
+                                <Card.Header as="h5">Due Date: {format(parseISO(session.date), 'EEEE, MMMM do')}</Card.Header>
                                 <ListGroup variant="flush">
                                     {session.exercises.map((exercise, index) => (
                                         <ListGroup.Item key={index}>
-                                            <strong>{exercise.name}</strong> - Sets: {exercise.sets}, Reps: {exercise.reps}, Weight: {exercise.weight}
+                                            <strong>{exercise.name}</strong>
+                                            {exercise.sets.map((set, index) => (
+                                                <p key={index}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                            ))}
                                         </ListGroup.Item>
                                     ))}
                                 </ListGroup>
