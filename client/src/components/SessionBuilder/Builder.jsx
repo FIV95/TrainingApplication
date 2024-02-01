@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Form, Tab, Tabs, Card, ListGroup } from 'react-bootstrap';
+import { Button, Form, Tab, Tabs, Card, ListGroup, Row, Col } from 'react-bootstrap';
 
 const SessionBuilder = () => {
     //Fancy form stuff
@@ -10,8 +10,6 @@ const SessionBuilder = () => {
     const [coachId, setCoachId] = useState(null);
     const [clientId, setClientId] = useState(null);
 
-    // State variables for exercises
-    const [exercises, setExercises] = useState([]);
 
     // State Variable for showing the date selection
     const [showDateSelection, setShowDateSelection] = useState(false);
@@ -32,7 +30,8 @@ const SessionBuilder = () => {
     const [currentExercise, setCurrentExercise] = useState({});
 
     // Exercise form variables
-    const [sets, setSets] = useState(0);
+    const [exercises, setExercises] = useState([]);
+    const [sets, setSets] = useState([]);
     const [reps, setReps] = useState(0);
     const [weight, setWeight] = useState(0);
 
@@ -96,12 +95,12 @@ const SessionBuilder = () => {
     }
 
     const handleAddSet = () => {
-        if (showAddSetForm == false) {
-            SetshowAddSetForm(true);
-        }
-        else {
-            return SetshowAddSetForm(false);
-        }
+        // Add the current set to the sets array
+        setSets(prevSets => [...prevSets, { reps, weight, setNumber: prevSets.length + 1 }]);
+
+        // Reset the reps and weight inputs
+        setReps(0);
+        setWeight(0);
     };
 
     const handleAddSetSubmit = (event) => {
@@ -170,23 +169,29 @@ const SessionBuilder = () => {
                                         </Form.Group>
                                         {showAddSet && (
                                             <div className='mt-4'>
+                                                {sets.map((set, index) => (
+                                                    <div key={index}>
+                                                        <p>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                    </div>
+                                                ))}
+                                                <Form>
+                                                    <Row>
+                                                        <Col>
+                                                            <Form.Group>
+                                                                <Form.Label>Reps</Form.Label>
+                                                                <Form.Control type="number" value={reps} onChange={handleRepsChange} />
+                                                            </Form.Group>
+                                                        </Col>
+                                                        <Col>
+                                                            <Form.Group>
+                                                                <Form.Label>Weight</Form.Label>
+                                                                <Form.Control type="number" value={weight} onChange={handleWeightsChange} />
+                                                            </Form.Group>
+                                                        </Col>
+                                                    </Row>
+                                                </Form>
                                                 <Button onClick={handleAddSet}>Add Set</Button>
                                                 <hr></hr>
-                                                {showAddSetForm && (
-                                                    <Form>
-                                                        <Form.Group>
-                                                            <Form.Label>Reps</Form.Label>
-                                                            <Form.Control type="number" defaultValue={10} onChange={handleRepsChange} />
-                                                        </Form.Group>
-                                                        <Form.Group>
-                                                            <Form.Label>Weight</Form.Label>
-                                                            <Form.Control type="number" defaultValue={50} onChange={handleWeightsChange} />
-                                                        </Form.Group>
-                                                        <Button className='mt-4' onClick={handleAddSetSubmit}>Submit Set</Button>
-                                                    </Form>
-                                                )}
-                                                <hr></hr>
-                                                <Button onClick={handleSubmit}>Submit Session</Button>
                                             </div>
                                         )}
                                     </>
