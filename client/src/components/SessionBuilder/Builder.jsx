@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Button, Form, Tab, Tabs, Card, ListGroup } from 'react-bootstrap';
 
 const SessionBuilder = () => {
     //Fancy form stuff
     const [showAddSetForm, SetshowAddSetForm] = useState(false);
-    
+
+    // State variables for coach's ID and client's ID
+    const [coachId, setCoachId] = useState(null);
+    const [clientId, setClientId] = useState(null);
+
+    // State variables for exercises
+    const [exercises, setExercises] = useState([]);
+
+    // State Variable for showing the date selection
+    const [showDateSelection, setShowDateSelection] = useState(false);
+    const [dateError, setDateError] = useState(null);
+
+    // State Variable for the selected date
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    // state variable for showing the "Add a Set" button
+    const [showAddSet, setShowAddSet] = useState(false);
+
+
+    const handleAddSessionClick = () => {
+        setShowDateSelection(true);
+    };
     // Dummy data
     const [inProgressTrainingSession, setInProgressTrainingSession] = useState({});
     const [currentExercise, setCurrentExercise] = useState({});
 
     // Exercise form variables
+    const [sets, setSets] = useState(0);
     const [reps, setReps] = useState(0);
     const [weight, setWeight] = useState(0);
 
@@ -42,18 +65,27 @@ const SessionBuilder = () => {
     // Hardcoded exercise options
     const exerciseOptions = ['Squat', 'Bench Press', 'Deadlift', 'Press', 'Power Clean'];
 
-    const handleAddSessionClick = () => {
-        // Logic to handle adding a new session
-    };
 
-    const handleDateSelection = (date) => {
-        // Logic to handle date selection
-    };
+
+    const handleDateSelection = (event) => {
+        const selectedDate = new Date(event.target.value);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (selectedDate <= currentDate) {
+            setDateError('The date must be in the future.');
+        } else {
+            setDateError(null);
+            setSelectedDate(event.target.value);
+        }
+    }
 
     const handleExerciseSelection = (event) => {
         // Logic to handle exercise selection
         const selectedExercise = event.target.value;
         setCurrentExercise(selectedExercise);
+
+        setShowAddSet(true);
     };
 
     const handleRepsChange = (event) => {
@@ -64,12 +96,10 @@ const SessionBuilder = () => {
     }
 
     const handleAddSet = () => {
-        if (showAddSetForm ==  false)
-        {
+        if (showAddSetForm == false) {
             SetshowAddSetForm(true);
         }
-        else
-        {
+        else {
             return SetshowAddSetForm(false);
         }
     };
@@ -82,10 +112,33 @@ const SessionBuilder = () => {
         // Logic to submit the session
     };
 
+    useEffect(() => {
+        const storedCoachId = sessionStorage.getItem('UserId');
+        const storedClientId = sessionStorage.getItem('ClientId');
+
+        // Fetch all exercises from the backend using axios
+        axios.get('/api/Exercise')
+            .then(response => {
+                setExercises(response.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        // Fetch the last week of training sessions for the specific client
+        axios.get(`/api/TrainingSession/WeeklySessions/${storedClientId}`)
+            .then(response => {
+                setTrainingSessions(response.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }, []);
+
     return (
         <>
-            <div style={{height: "60px"}} className='bg-secondary mb-5'>
-                <img className='d-flex flex-start' style={{height: "50px"}} src='https://cdn.imgbin.com/22/5/12/imgbin-hamburger-button-computer-icons-menu-bar-line-4vAWQ1m6s7Hmt7dM6xA0GRhKG.jpg' alt='Hamburger Button'/>
+            <div style={{ height: "60px" }} className='bg-secondary mb-5'>
+                <img className='d-flex flex-start' style={{ height: "50px" }} src='https://cdn.imgbin.com/22/5/12/imgbin-hamburger-button-computer-icons-menu-bar-line-4vAWQ1m6s7Hmt7dM6xA0GRhKG.jpg' alt='Hamburger Button' />
             </div>
             <div className='border p-4'>
                 <Tabs defaultActiveKey="upcomingSessions">
@@ -96,41 +149,48 @@ const SessionBuilder = () => {
                                 {/* Session Details */}
                             </div>
                         ))}
-                        {/* New Session Form */}
-                        {inProgressTrainingSession && (
+                        <Button onClick={handleAddSessionClick}>+ Add Session</Button>
+                        {showDateSelection && (
                             <Form className='text-start'>
                                 <Form.Group className='mt-4'>
                                     <Form.Label>Select Date</Form.Label>
                                     <Form.Control type="date" onChange={handleDateSelection} />
+                                    {dateError && <div className="text-danger">{dateError}</div>}
                                 </Form.Group>
-                                <Form.Group className='mt-4'>
-                                    <Form.Label>Select Exercise</Form.Label>
-                                    <Form.Select aria-label="Select exercise" onChange={handleExerciseSelection}>
-                                        {exerciseOptions.map((exercise, index) => (
-                                            <option key={index} value={exercise}>{exercise}</option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                                <div className= 'mt-4'>
-                                    <Button onClick={handleAddSet}>Add Set</Button>
-                                    <hr></hr>
-                                    {showAddSetForm && (
-                                        <Form>
-                                            <Form.Group>
-                                                <Form.Label>Reps</Form.Label>
-                                                <Form.Control type="number" defaultValue={10} onChange={handleRepsChange} />
-                                            </Form.Group>
-                                            <Form.Group>
-                                                <Form.Label>Weight</Form.Label>
-                                                <Form.Control type="number" defaultValue={50} onChange={handleWeightsChange} />
-                                            </Form.Group>
-                                            <Button className='mt-4' onClick={handleAddSetSubmit}>Submit Set</Button>
-                                        </Form>
-                                    )} {/* Display sets for the current exercise */}
-                                    <hr></hr>
-                                    <Button onClick={handleSubmit}>Submit Session</Button>
-                                    <Button onClick={handleAddSessionClick}>+ Add Session</Button>
-                                </div>
+                                {selectedDate && (
+                                    <>
+                                        <Form.Group className='mt-4'>
+                                            <Form.Label>Exercise(s)</Form.Label>
+                                            <Form.Select aria-label="Select exercise" onChange={handleExerciseSelection}>
+                                                <option value="">Select an exercise</option>
+                                                {exerciseOptions.map((exercise, index) => (
+                                                    <option key={index} value={exercise}>{exercise}</option>
+                                                ))}
+                                            </Form.Select>
+                                        </Form.Group>
+                                        {showAddSet && (
+                                            <div className='mt-4'>
+                                                <Button onClick={handleAddSet}>Add Set</Button>
+                                                <hr></hr>
+                                                {showAddSetForm && (
+                                                    <Form>
+                                                        <Form.Group>
+                                                            <Form.Label>Reps</Form.Label>
+                                                            <Form.Control type="number" defaultValue={10} onChange={handleRepsChange} />
+                                                        </Form.Group>
+                                                        <Form.Group>
+                                                            <Form.Label>Weight</Form.Label>
+                                                            <Form.Control type="number" defaultValue={50} onChange={handleWeightsChange} />
+                                                        </Form.Group>
+                                                        <Button className='mt-4' onClick={handleAddSetSubmit}>Submit Set</Button>
+                                                    </Form>
+                                                )}
+                                                <hr></hr>
+                                                <Button onClick={handleSubmit}>Submit Session</Button>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </Form>
                         )}
                         <hr></hr>
@@ -163,6 +223,5 @@ const SessionBuilder = () => {
             </div>
         </>
     );
-};
-
+}
 export default SessionBuilder;
