@@ -66,6 +66,7 @@ const SessionBuilder = () => {
             id: 1,
             date: "2024-01-20",
             completedDate: "2024-01-21",
+            comments: "Great effort!",
             exercises: [
                 {
                     name: "Squat",
