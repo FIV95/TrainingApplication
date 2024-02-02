@@ -48,7 +48,7 @@ function CoachDashboard() {
                     <a href='/construction' className='me-5'>(Under construction) Messages</a>
                 </div>
 
-                <h1>Welcome, Coach "Insert Name Here</h1>
+                <h1>Welcome, Coach "Insert Name Here"</h1>
 
                 <div className='d-flex justify-content-center'>
 
