@@ -11,6 +11,7 @@ import {
 import './App.css'
 import DashBoard from './components/DashBoard/Dashboard';
 import SessionBuilder from './components/SessionBuilder/Builder';
+import Construction from './components/Construction';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path='/' element={<Login_and_Reg />}></Route>
         <Route path='/dashboard' element={<DashBoard />}></Route>
         <Route path='/builder' element={<SessionBuilder />}></Route>
+        <Route path='/construction' element={<Construction/>}></Route>
       </Routes>
     </>
   )

@@ -9,6 +9,8 @@ import {
 } from "react-router-dom";
 
 function CoachDashboard() {
+    const navigate = useNavigate();
+
     const notifications = [
         { id: 1, name: 'Giacomo', action: 'left a comment on their Thursday Workout' },
         { id: 2, name: 'Giacomo', action: 'Missed their Tuesday Workout' },
@@ -24,14 +26,27 @@ function CoachDashboard() {
         { img: "https://th.bing.com/th/id/R.3925851c0e48b256b6b33b7b85bea046?rik=xJCqDIATjiwRRw&riu=http%3a%2f%2fp2.music.126.net%2fAWd90QQDvO3o5QDKKWX_Sw%3d%3d%2f109951164386087590.jpg&ehk=bPf1HLoz0C0m17uL4vKbbVJ3cjwyLbmhd2FyaCXmTtA%3d&risl=&pid=ImgRaw&r=0", name: "A Client", actions: "1" }
     ]
 
+
     return (
         <>
             <div className='d-flex justify-content-between header'>
                 <RxHamburgerMenu className='hamburger-menu mt-3 ms-3' />
-                <h1 className='me-3 mt-2'>That Training App</h1>
+                <div className='d-flex'>
+                    <button className='btn btn-danger h-50 mt-3' onClick={e => navigate("/")}>Logout</button>
+                    <div style={{borderLeft: "white", marginLeft: "30px"}}>
+                        <h1 className='me-3 mt-2'>That Training App</h1>
+                    </div>
+                </div>
             </div>
 
             <div className='pt-5 body'>
+
+                <div className='mb-3'>
+                    <a href='/dashboard' className='me-5'>Home</a>
+                    <a href='/builder' className='me-5'>Session Builder</a>
+                    <a href='/construction' className='me-5'>(Under construction) Clients</a>
+                    <a href='/construction' className='me-5'>(Under construction) Messages</a>
+                </div>
 
                 <h1>Welcome, Coach "Insert Name Here</h1>
 
@@ -90,7 +105,7 @@ function CoachDashboard() {
                                     ))}
                                 </ListGroup>
                                 <div className="mt-2 d-flex justify-content-start">
-                                    <Button variant="secondary">View Client's Profile</Button>
+                                    <Button variant="secondary">View Client's Sessions</Button>
                                 </div>
                             </Row>
                         </Container>
