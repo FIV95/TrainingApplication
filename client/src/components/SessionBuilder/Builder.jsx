@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Form, Tab, Tabs, Card, ListGroup, Row, Col } from 'react-bootstrap';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
@@ -15,6 +16,8 @@ import { RxHamburgerMenu } from "react-icons/rx";
 // ! import { format } from 'date-fns';
 
 
+
+
 const SessionBuilder = () => {
     //Fancy form stuff
     const [showAddSetForm, SetshowAddSetForm] = useState(false);
@@ -24,6 +27,7 @@ const SessionBuilder = () => {
     const [clientId, setClientId] = useState(null);
 
     const [date, setDate] = useState('');
+    const navigate = useNavigate();
 
 
 
@@ -61,29 +65,30 @@ const SessionBuilder = () => {
         {
             id: 1,
             date: "2024-01-20",
+            completedDate: "2024-01-21",
             exercises: [
                 {
                     name: "Squat",
                     sets: [
-                        { setNumber: 1, reps: 10, weight: "150Ibs" },
-                        { setNumber: 2, reps: 10, weight: "150Ibs" },
-                        { setNumber: 3, reps: 10, weight: "170Ibs" },
+                        { setNumber: 1, reps: 10, weight: "150" },
+                        { setNumber: 2, reps: 10, weight: "150" },
+                        { setNumber: 3, reps: 10, weight: "170" },
                     ],
                 },
                 {
                     name: "Bench Press",
                     sets: [
-                        { setNumber: 1, reps: 10, weight: "100Ibs" },
-                        { setNumber: 2, reps: 10, weight: "100Ibs" },
-                        { setNumber: 3, reps: 10, weight: "100Ibs" },
+                        { setNumber: 1, reps: 10, weight: "100" },
+                        { setNumber: 2, reps: 10, weight: "100" },
+                        { setNumber: 3, reps: 10, weight: "100" },
                     ],
                 },
                 {
                     name: "Deadlift",
                     sets: [
-                        { setNumber: 1, reps: 5, weight: "150Ibs" },
-                        { setNumber: 2, reps: 5, weight: "150Ibs" },
-                        { setNumber: 3, reps: 5, weight: "150Ibs" },
+                        { setNumber: 1, reps: 5, weight: "150" },
+                        { setNumber: 2, reps: 5, weight: "150" },
+                        { setNumber: 3, reps: 5, weight: "150" },
                     ],
                 },
             ],
@@ -95,17 +100,17 @@ const SessionBuilder = () => {
                 {
                     name: "Press",
                     sets: [
-                        { setNumber: 1, reps: 10, weight: "60Ibs" },
-                        { setNumber: 2, reps: 10, weight: "60Ibs" },
-                        { setNumber: 3, reps: 10, weight: "60Ibs" },
+                        { setNumber: 1, reps: 10, weight: "60" },
+                        { setNumber: 2, reps: 10, weight: "60" },
+                        { setNumber: 3, reps: 10, weight: "60" },
                     ],
                 },
                 {
                     name: "Power Clean",
                     sets: [
-                        { setNumber: 1, reps: 5, weight: "100Ibs" },
-                        { setNumber: 2, reps: 5, weight: "100Ibs" },
-                        { setNumber: 3, reps: 5, weight: "100Ibs" },
+                        { setNumber: 1, reps: 5, weight: "100" },
+                        { setNumber: 2, reps: 5, weight: "100" },
+                        { setNumber: 3, reps: 5, weight: "100" },
                     ],
                 },
             ],
@@ -163,6 +168,10 @@ const SessionBuilder = () => {
         // Reset the reps and weight inputs
         setReps('');
         setWeight('');
+    };
+
+    const handleViewClick = (session) => {
+        navigate(`/session/${session.id}`, { state: { session } });
     };
 
     const handleAddSetSubmit = (event) => {
@@ -240,7 +249,7 @@ const SessionBuilder = () => {
                     <a href='/construction' className='me-5'>(Under construction) Clients</a>
                     <a href='/construction' className='me-5'>(Under construction) Messages</a>
                 </div>
-                
+
                 <Tabs defaultActiveKey="upcomingSessions" className='my-tabs'>
                     <Tab className='bg-white' eventKey="upcomingSessions" title="Upcoming Sessions">
                         {/* List Upcoming Sessions */}
@@ -333,19 +342,42 @@ const SessionBuilder = () => {
                         ))}
                     </Tab>
                     <Tab className='bg-white' eventKey="previousSessions" title="Previous Sessions">
-                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', gap: '20px' }} className='p-3'>
+                        <div style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'flex-start',
+                            gap: '20px',
+                            backgroundColor: 'rgba(224, 225, 221)', // Light background for the tab content
+                            padding: '20px'
+                        }}>
                             {previousSessions.map((session, sessionIndex) => (
-                                <Card key={sessionIndex} className="my-3 d-flex flex-column" style={{ width: '18rem', flex: '0 0 auto' }}>
-                                    <Card.Header as="h5">Date: {format(parseISO(session.date), 'EEEE, MMMM do')}</Card.Header>
+                                <Card key={sessionIndex} className="my-3 d-flex flex-column" style={{
+                                    width: '18rem',
+                                    flex: '0 0 auto',
+                                    backgroundColor: 'rgba(13, 27, 42)', // Dark card background
+                                    color: 'white', // Text color
+                                    borderRadius: '5px'
+                                }}>
+                                    <Card.Header as="h5" style={{
+                                        backgroundColor: 'rgba(27, 38, 59)',
+                                        color: 'white'
+                                    }}>Date: {format(parseISO(session.date), 'EEEE, MMMM do')}</Card.Header>
                                     <ListGroup variant="flush" className="flex-grow-1">
                                         {session.exercises.map((exercise, exerciseIndex) => {
                                             const [open, setOpen] = useState(Array(session.exercises.length).fill(false));
                                             return (
-                                                <ListGroup.Item key={exerciseIndex}>
+                                                <ListGroup.Item key={exerciseIndex} style={{
+                                                    backgroundColor: 'rgba(27, 38, 59)', // Darker background for list items
+                                                    color: 'rgba(119, 141, 169)' // Mid-tone text color
+                                                }}>
                                                     <strong>{exercise.name}</strong>
                                                     {exercise.sets.length >= 3 && (
                                                         <div
-                                                            style={{ cursor: 'pointer', fontSize: '0.75rem', color: 'blue' }}
+                                                            style={{
+                                                                cursor: 'pointer',
+                                                                fontSize: '0.75rem',
+                                                                color: 'rgba(65, 90, 119)' // Deep blue text color for clickable items
+                                                            }}
                                                             onClick={() => {
                                                                 const newOpen = [...open];
                                                                 newOpen[exerciseIndex] = !newOpen[exerciseIndex];
@@ -356,19 +388,37 @@ const SessionBuilder = () => {
                                                         </div>
                                                     )}
                                                     {open[exerciseIndex] && exercise.sets.map((set, setIndex) => (
-                                                        <p key={setIndex}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                        <p key={setIndex} style={{
+                                                            color: 'rgba(224, 225, 221)' // Light text for the details
+                                                        }}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
                                                     ))}
                                                 </ListGroup.Item>
                                             );
                                         })}
                                     </ListGroup>
-                                    <Card.Footer className="text-muted">
-                                        <Button variant="primary">View Session</Button>
+                                    <Card.Footer className="text-muted" style={{
+                                        backgroundColor: 'rgba(27, 38, 59)',
+                                        color: 'rgba(119, 141, 169)'
+                                    }}>
+                                        <button
+                                            onClick={() => handleViewClick(session)}
+                                            style={{
+                                                backgroundColor: 'rgba(65, 90, 119)',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '5px 10px',
+                                                borderRadius: '5px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            View Session
+                                        </button>
                                     </Card.Footer>
                                 </Card>
                             ))}
                         </div>
                     </Tab>
+
                 </Tabs>
             </div>
         </>

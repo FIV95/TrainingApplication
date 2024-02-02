@@ -1,0 +1,86 @@
+
+.client-container {
+    background-color: rgba(224, 225, 221);
+    color: rgba(119, 141, 169);
+  }
+
+  .h1-welcome {
+    color: rgba(65, 90, 119);
+  }
+
+  .card-custom {
+    background-color: rgba(13, 27, 42);
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .card-header-custom {
+    background-color: rgba(27, 38, 59);
+    color: rgb(231, 252, 0);
+  }
+
+  .card-body-custom {
+    color: rgba(119, 141, 169);
+  }
+
+  .card-footer-custom {
+    background-color: rgba(27, 38, 59);
+    color: rgba(119, 141, 169);
+  }
+
+
+  /* Builder Page (Previous Sessions) */
+  .view-sets {
+    cursor: pointer;
+    font-style: italic;
+    margin-right: 20px;
+    color: rgba(65, 90, 119);
+  }
+
+  .view-session-link {
+    margin-left: 20px;
+    color: rgb(2, 209, 245);
+  }
+
+  /* Builder Page*/
+  .button-custom {
+    background-color: rgba(65, 90, 119);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* Builder Page */
+  .divider {
+    border-left: 1px solid #000;
+    height: 100%;
+    margin-right: 10px;
+  }
+
+
+  .reply-button {
+    color: rgb(2, 209, 245);
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .client-notif {
+    /* background-color: #415A77; */
+    background-color: rgba(13, 27, 42);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+    height: 390px;
+    width: 700px;
+    margin-top: 42px;
+  }
+
+  .client-notification {
+    background-color: #474647;
+    height: 75px;
+    color: white;
+  }
+  

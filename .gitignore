@@ -1,7 +1,0 @@
-.DS_Store
-Migrations/
-bin/
-obj/
-Debug/
-.vscode
-backend/appsettings.json

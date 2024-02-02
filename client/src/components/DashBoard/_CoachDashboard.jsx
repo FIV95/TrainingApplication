@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { RxHamburgerMenu } from "react-icons/rx";
 import React from 'react';
@@ -10,6 +10,8 @@ import {
 
 function CoachDashboard() {
     const navigate = useNavigate();
+
+    const [firstName, setFirstName] = useState("")
 
     const notifications = [
         { id: 1, name: 'Giacomo', action: 'left a comment on their Thursday Workout' },
@@ -25,6 +27,11 @@ function CoachDashboard() {
         { img: "https://th.bing.com/th/id/OIP.BraYRCiBc5uASdncgYA7qQHaHa?rs=1&pid=ImgDetMain", name: "Valerie Liberty", actions: "1" },
         { img: "https://th.bing.com/th/id/R.3925851c0e48b256b6b33b7b85bea046?rik=xJCqDIATjiwRRw&riu=http%3a%2f%2fp2.music.126.net%2fAWd90QQDvO3o5QDKKWX_Sw%3d%3d%2f109951164386087590.jpg&ehk=bPf1HLoz0C0m17uL4vKbbVJ3cjwyLbmhd2FyaCXmTtA%3d&risl=&pid=ImgRaw&r=0", name: "A Client", actions: "1" }
     ]
+
+    useEffect(() => {
+        const firstNameFromSession = sessionStorage.getItem('firstName');
+        setFirstName(firstNameFromSession);
+    })
 
 
     return (
@@ -48,12 +55,12 @@ function CoachDashboard() {
                     <a href='/construction' className='me-5'>(Under construction) Messages</a>
                 </div>
 
-                <h1>Welcome, Coach "Insert Name Here"</h1>
+                <h1>Welcome, Coach {firstName}</h1>
 
                 <div className='d-flex justify-content-center'>
 
                     <div className='w-25'>
-                        <div className='coach-dashboard rounded mt-5 p-3 me-5'>
+                        <div className='coach-dashboard rounded mt-5 p-3 me-5 .yourclients'>
                             <h3 style={{ textAlign: "start", color: "white" }}>Your Clients</h3>
                             <div style={{ overflowY: "scroll", height: "230px" }}>
                                 {clients.map((client, index) => (
