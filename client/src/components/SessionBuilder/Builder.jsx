@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Form, Tab, Tabs, Card, ListGroup, Row, Col } from 'react-bootstrap';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaPlus } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 import { RxHamburgerMenu } from "react-icons/rx";
 
@@ -21,6 +21,53 @@ import { RxHamburgerMenu } from "react-icons/rx";
 const SessionBuilder = () => {
     //Fancy form stuff
     const [showAddSetForm, SetshowAddSetForm] = useState(false);
+    const [showCommentForm, setShowCommentForm] = useState([]);
+    const [exerciseComments, setExerciseComments] = useState([]);
+    const [showDropdown, setShowDropdown] = useState([]);
+    const [currentComment, setCurrentComment] = useState('');
+
+
+    const toggleCommentForm = (index) => {
+        const newShowCommentForm = [...showCommentForm];
+        newShowCommentForm[index] = !newShowCommentForm[index];
+        setShowCommentForm(newShowCommentForm);
+    };
+
+    const handleCommentChange = (event, index) => {
+        // Update the current input value
+        setCurrentComment(event.target.value);
+    };
+
+    const handleAddComment = (index, comment) => {
+        setExerciseComments(prevComments => {
+            const newComments = [...prevComments];
+            if (!Array.isArray(newComments[index])) {
+                newComments[index] = [];
+            }
+            newComments[index] = [...newComments[index], { coachId: 'coachId', createdAt: new Date(), content: comment }];
+            return newComments;
+        });
+    };
+
+    const handleConfirmClick = (exerciseIndex) => {
+        if (currentComment.trim() === '') {
+            alert('Comment cannot be empty');
+            return;
+        }
+        handleAddComment(exerciseIndex, currentComment);
+        setCurrentComment('');
+        const newShowCommentForm = [...showCommentForm];
+        newShowCommentForm[exerciseIndex] = false;
+        setShowCommentForm(newShowCommentForm);
+    };
+
+    const toggleCommentsVisibility = (exerciseIndex) => {
+        // Toggle the visibility of the comments for the clicked exercise
+        const newCommentsVisibility = [...commentsVisibility];
+        newCommentsVisibility[exerciseIndex] = !newCommentsVisibility[exerciseIndex];
+        setCommentsVisibility(newCommentsVisibility);
+    };
+
 
     // State variables for coach's ID and client's ID
     const [coachId, setCoachId] = useState(null);
@@ -28,6 +75,15 @@ const SessionBuilder = () => {
 
     const [date, setDate] = useState('');
     const navigate = useNavigate();
+    const [commentsVisibility, setCommentsVisibility] = useState([]);
+
+    const handleCommentVisibilityChange = (index) => {
+        const newCommentsVisibility = [...commentsVisibility];
+        newCommentsVisibility[index] = !newCommentsVisibility[index];
+        setCommentsVisibility(newCommentsVisibility);
+    };
+
+
 
 
 
@@ -140,6 +196,8 @@ const SessionBuilder = () => {
         }
     }
 
+
+
     const handleExerciseSelection = (event) => {
         // Logic to handle exercise selection
         const selectedExercise = event.target.value;
@@ -184,13 +242,14 @@ const SessionBuilder = () => {
 
         const newSession = {
             date: selectedDate,
-            exercises: exercises.map(exercise => ({
+            exercises: exercises.map((exercise, index) => ({
                 name: exercise.name,
                 sets: exercise.sets.map(set => ({
                     setNumber: set.setNumber,
                     reps: set.reps,
                     weight: set.weight
-                }))
+                })),
+                comments: exerciseComments[index] ? exerciseComments[index].map(comment => comment.content) : []
             }))
         };
 
@@ -207,14 +266,16 @@ const SessionBuilder = () => {
         setSets([]);
     };
 
+
     useEffect(() => {
         const storedCoachId = sessionStorage.getItem('UserId');
         const storedClientId = sessionStorage.getItem('ClientId');
-
-        // Fetch all exercises from the backend using axios
+        console.log(`exerciseComments updated: ${JSON.stringify(exerciseComments)}`);       // Fetch all exercises from the backend using axios
         axios.get('/api/Exercise')
             .then(response => {
                 setExerciseChoices(response.data);
+                setShowCommentForm(new Array(response.data.length).fill(false));
+                setShowDropdown(new Array(response.data.length).fill(false));
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -223,7 +284,7 @@ const SessionBuilder = () => {
         // Fetch the last week of training sessions for the specific client
         axios.get(`/api/TrainingSession/WeeklySessions/${storedClientId}`)
             .then(response => {
-                setTrainingSessions(response.data);
+
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -253,12 +314,7 @@ const SessionBuilder = () => {
 
                 <Tabs defaultActiveKey="upcomingSessions" className='my-tabs'>
                     <Tab className='bg-white' eventKey="upcomingSessions" title="Upcoming Sessions">
-                        {/* List Upcoming Sessions */}
-                        {upcomingSessions.map((session) => (
-                            <div key={session.id}>
-                                {/* Session Details */}
-                            </div>
-                        ))}
+
                         {!isBuilding && <Button style={{ marginTop: '10px' }} onClick={() => { handleAddSessionClick(); setIsBuilding(true); }}>+ Add Session</Button>}
                         {showDateSelection && (
                             <Form className='text-start p-3'>
@@ -271,10 +327,75 @@ const SessionBuilder = () => {
                                     <>
                                         {Array.isArray(exercises) && exercises.map((exercise, index) => (
                                             <div key={index} className='mt-4'>
-                                                <h2>{exercise.name}</h2>
-                                                {exercise.sets.map((set, index) => (
-                                                    <p key={index}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                <h2>
+                                                    {exercise.name}
+                                                </h2>
+                                                {exercise.sets.map((set, setIndex) => (
+                                                    <p key={setIndex}>
+                                                        Set {set.setNumber}: <span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>{set.reps} reps</span> @ <span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>{set.weight} kg</span>
+                                                    </p>
                                                 ))}
+                                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginLeft: '20px' }}
+                                                    onClick={() => handleCommentVisibilityChange(index)}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', backgroundColor: '#fff', padding: '5px', borderRadius: '10px' }}
+                                                        onMouseEnter={e => {
+                                                            e.currentTarget.style.backgroundColor = '#f0f0f0';
+                                                        }}
+                                                        onMouseLeave={e => {
+                                                            e.currentTarget.style.backgroundColor = '#fff';
+                                                        }}
+                                                    >
+                                                        <div style={{ fontSize: '0.8em', marginRight: '5px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', padding: '5px', borderRadius: '10px' }}>
+                                                            {exerciseComments[index] && `${exerciseComments[index].length} Note(s)`}
+                                                        </div>
+                                                        {/* Add Note button */}
+                                                        <button onClick={(e) => {e.stopPropagation(); toggleCommentForm(index);}}>
+                                                            Add Note
+                                                        </button>
+                                                        <div style={{
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            borderRadius: '10px',
+                                                            border: '1px solid',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            backgroundColor: '#f0f0f0',
+                                                        }}>
+                                                            {commentsVisibility[index] ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Comment form */}
+                                                {showCommentForm[index] && (
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            value={currentComment}
+                                                            onChange={(event) => handleCommentChange(event, index)}
+                                                        />
+                                                        <button onClick={() => handleConfirmClick(index)}>
+                                                            Confirm
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {exerciseComments[index] && exerciseComments[index].length > 0 && (
+                                                    <div style={{
+                                                        marginTop: '0',
+                                                        backgroundColor: '#f0f0f0',
+                                                        border: '1px solid #ccc',
+                                                        borderTop: 'none',
+                                                    }}>
+                                                        {exerciseComments[index].map((comment, commentIndex) => (
+                                                            <p key={commentIndex}>
+                                                                {comment}
+                                                            </p>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
 
@@ -293,7 +414,7 @@ const SessionBuilder = () => {
                                             <div className='mt-4'>
                                                 {sets.map((set, index) => (
                                                     <div key={index}>
-                                                        <p>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                        <p>Set {set.setNumber}: {set.reps} reps @ {set.weight} kg</p>
                                                     </div>
                                                 ))}
                                                 <Form>
@@ -328,13 +449,20 @@ const SessionBuilder = () => {
                         <hr></hr>
                         {upcomingSessions.map((session, index) => (
                             <Card key={index} className="my-3">
-                                <Card.Header as="h5">Due Date: {format(parseISO(session.date), 'EEEE, MMMM do')}</Card.Header>
+                                <Card.Header as="h5">Due Date: {session.date ? format(parseISO(session.date), 'EEEE, MMMM do') : 'N/A'}</Card.Header>
                                 <ListGroup variant="flush">
                                     {session.exercises.map((exercise, index) => (
                                         <ListGroup.Item key={index}>
-                                            <strong>{exercise.name}</strong>
+                                            <strong>Exercise {index + 1}: {exercise.name}</strong>
                                             {exercise.sets.map((set, index) => (
-                                                <p key={index}>Set {set.setNumber}: {set.reps} reps, {set.weight} kg</p>
+                                                <p key={index}>Set {set.setNumber}: {set.reps} reps @ {set.weight} kg</p>
+                                            ))}
+                                            {exercise.comments && exercise.comments.map((comment, index) => (
+                                                <div key={index} className="mt-3">
+                                                    <h6 className="mb-0">{comment.coachId}</h6>
+                                                    <small className="text-muted">{comment.createdAt ? format(parseISO(comment.createdAt), 'EEEE, MMMM do, yyyy h:mm a') : 'N/A'}</small>
+                                                    <p className="mb-0">{comment.content}</p>
+                                                </div>
                                             ))}
                                         </ListGroup.Item>
                                     ))}

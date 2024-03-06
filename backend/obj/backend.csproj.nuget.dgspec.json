@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj": {}
+    "/Users/fiv/Desktop/StrengthApp/TrainingApplication/backend/backend.csproj": {}
   },
   "projects": {
-    "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj": {
+    "/Users/fiv/Desktop/StrengthApp/TrainingApplication/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj",
+        "projectUniqueName": "/Users/fiv/Desktop/StrengthApp/TrainingApplication/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\judah\\.nuget\\packages\\",
-        "outputPath": "C:\\CodingDojo\\Projects\\TrainingApplication\\backend\\obj\\",
+        "projectPath": "/Users/fiv/Desktop/StrengthApp/TrainingApplication/backend/backend.csproj",
+        "packagesPath": "/Users/fiv/.nuget/packages/",
+        "outputPath": "/Users/fiv/Desktop/StrengthApp/TrainingApplication/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\judah\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/fiv/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -96,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
